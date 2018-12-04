@@ -22,34 +22,25 @@ docker-compose ps
 # Get individual port mapping for exposed services
 explorerMapping=`docker-compose port explorer 80`
 
-#Check if we run in a tty before using exec and otherwise set $TERM as it fails if not set.
-if [ ! -t 1 ] ;
-then
-  export TERM=xterm-color
-fi
 
 # Displays links to exposed services
-ORANGE='\033[0;33m'
-CYAN='\033[0;36m'
-BOLD=$(tput bold)
-NORMAL=$(tput sgr0)
 
-echo "${CYAN}****************************************************************"
+echo "****************************************************************"
 dots=""
 maxRetryCount=50
 while [ "$(curl -m 1 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:${explorerMapping##*:})" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
 do
   dots=$dots"."
-  printf "${CYAN} Block explorer is starting, please wait ${ORANGE}$dots${NORMAL}\\r"
+  printf "Block explorer is starting, please wait $dots\\r"
   sleep 1
 done
 
 if [ ${#dots} -gt ${maxRetryCount} ]; then
-  (>&2 echo "${ORANGE}ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !${CYAN}   *                                                                             ")
-  echo "****************************************************************${NORMAL}"
+  echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !   *                                                                             "
+  echo "****************************************************************"
 else
-    echo "JSON-RPC ${BOLD}HTTP${NORMAL}${CYAN} service endpoint      : ${ORANGE}http://${HOST}:${explorerMapping##*:}/jsonrpc${CYAN}   *"
-    echo "JSON-RPC ${BOLD}WebSocket${NORMAL}${CYAN} service endpoint : ${ORANGE}ws://${HOST}:${explorerMapping##*:}/jsonws${CYAN}   *"
-  echo "${CYAN}Web block explorer address          : ${ORANGE}http://${HOST}:${explorerMapping##*:}${CYAN}   *                                                                             "
-  echo "****************************************************************${NORMAL}"
+  echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc   *"
+  echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws$   *"
+  echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}   *                                                                             "
+  echo "****************************************************************"
 fi
