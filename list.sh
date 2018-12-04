@@ -22,6 +22,7 @@ docker-compose ps
 # Get individual port mapping for exposed services
 explorerMapping=`docker-compose port explorer 80`
 
+
 # Displays links to exposed services
 
 echo "****************************************************************"
