@@ -22,6 +22,7 @@ docker-compose ps
 # Get individual port mapping for exposed services
 explorerMapping=`docker-compose port explorer 80`
 
+
 # Displays links to exposed services
 
 echo "****************************************************************"
@@ -35,11 +36,11 @@ do
 done
 
 if [ ${#dots} -gt ${maxRetryCount} ]; then
-  (>&2 echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !   *                                                                             ")
+  echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !   *                                                                             "
   echo "****************************************************************"
 else
-    echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc   *"
-    echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws$   *"
+  echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc   *"
+  echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws$   *"
   echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}   *                                                                             "
   echo "****************************************************************"
 fi
