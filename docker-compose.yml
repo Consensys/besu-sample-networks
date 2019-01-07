@@ -1,13 +1,16 @@
 version: '2.2'
 services:
   bootnode:
-    build: pantheon/.
-    image: quickstart/pantheon:latest
+    build:
+      context: pantheon/.
+      args:
+        PANTHEON_VERSION: ${PANTHEON_VERSION}
+    image: "quickstart/pantheon:${PANTHEON_VERSION}"
     entrypoint: /opt/pantheon/bootnode_start.sh --dev-mode
     volumes:
       - public-keys:/opt/pantheon/public-keys
   minernode:
-    image: quickstart/pantheon:latest
+    image: "quickstart/pantheon:${PANTHEON_VERSION}"
 #  The address 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 is one of the addresses in the
 #  dev mode genesys file
     command: ["--dev-mode",
@@ -18,19 +21,20 @@ services:
     depends_on:
       - bootnode
   node:
-    image: quickstart/pantheon:latest
+    image: "quickstart/pantheon:${PANTHEON_VERSION}"
     command: ["--dev-mode"]
     volumes:
       - public-keys:/opt/pantheon/public-keys
     depends_on:
       - bootnode
   rpcnode:
-    image: quickstart/pantheon:latest
+    image: "quickstart/pantheon:${PANTHEON_VERSION}"
     command: ["--dev-mode",
               "--rpc-enabled",
               "--rpc-listen=0.0.0.0:8545",
               "--ws-enabled",
               "--ws-listen=0.0.0.0:8546",
+              "--host-whitelist=*",
               "--rpc-cors-origins=*"]
     volumes:
       - public-keys:/opt/pantheon/public-keys
@@ -38,7 +42,7 @@ services:
       - bootnode
   explorer:
     build: block-explorer-light/.
-    image: quickstart/block-explorer-light:latest
+    image: "quickstart/block-explorer-light:${PANTHEON_VERSION}"
     depends_on:
       - rpcnode
     ports:

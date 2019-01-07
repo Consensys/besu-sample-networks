@@ -1,4 +1,7 @@
-FROM pegasyseng/pantheon:latest
+#default version to latest
+ARG PANTHEON_VERSION=latest
+
+FROM pegasyseng/pantheon:$PANTHEON_VERSION
 
 # Copy new entrypoint scripts
 COPY *_start.sh /opt/pantheon/
