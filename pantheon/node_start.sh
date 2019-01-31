@@ -14,9 +14,11 @@
 # write pub key for checking that network works
 node_id=`hostname`
 
-/opt/pantheon/bin/pantheon $@ export-pub-key "/opt/pantheon/public-keys/${node_id}"
+PUBLIC_KEYS_DIR=${PANTHEON_PUBLIC_KEY_DIRECTORY:=/opt/pantheon/public-keys/}
 
-BOOTNODE_KEY_FILE=/opt/pantheon/public-keys/bootnode
+/opt/pantheon/bin/pantheon $@ public-key export --to="${PUBLIC_KEYS_DIR}${node_id}"
+
+BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode"
 
 # sleep loop to wait for the public key file to be written
 while [ ! -f $BOOTNODE_KEY_FILE ]

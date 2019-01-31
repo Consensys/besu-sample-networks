@@ -5,39 +5,45 @@ services:
       context: pantheon/.
       args:
         PANTHEON_VERSION: ${PANTHEON_VERSION}
-    image: "quickstart/pantheon:${PANTHEON_VERSION}"
-    entrypoint: /opt/pantheon/bootnode_start.sh --dev-mode
+    image: quickstart/pantheon:${PANTHEON_VERSION}
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev
     volumes:
-      - public-keys:/opt/pantheon/public-keys
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
   minernode:
-    image: "quickstart/pantheon:${PANTHEON_VERSION}"
-#  The address 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 is one of the addresses in the
-#  dev mode genesys file
-    command: ["--dev-mode",
+    image: quickstart/pantheon:${PANTHEON_VERSION}
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+    command: ["--network=dev",
               "--miner-enabled",
-              "--miner-coinbase=0xfe3b557e8fb62b89f4916b721be55ceb828dbd73"]
+              "--miner-coinbase=${MINER_COINBASE}"]
     volumes:
-      - public-keys:/opt/pantheon/public-keys
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
   node:
-    image: "quickstart/pantheon:${PANTHEON_VERSION}"
-    command: ["--dev-mode"]
+    image: quickstart/pantheon:${PANTHEON_VERSION}
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+    command: ["--network=dev"]
     volumes:
-      - public-keys:/opt/pantheon/public-keys
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
   rpcnode:
-    image: "quickstart/pantheon:${PANTHEON_VERSION}"
-    command: ["--dev-mode",
-              "--rpc-enabled",
-              "--rpc-listen=0.0.0.0:8545",
-              "--ws-enabled",
-              "--ws-listen=0.0.0.0:8546",
-              "--host-whitelist=*",
-              "--rpc-cors-origins=*"]
+    image: quickstart/pantheon:${PANTHEON_VERSION}
+    command: ["--network=dev",
+              "--rpc-http-enabled",
+              "--rpc-http-host=0.0.0.0",
+              "--rpc-http-port=8545",
+              "--rpc-http-cors-origins=*",
+              "--rpc-ws-enabled",
+              "--rpc-ws-host=0.0.0.0",
+              "--rpc-ws-port=8546",
+              "--host-whitelist=*"]
     volumes:
-      - public-keys:/opt/pantheon/public-keys
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
   explorer:
