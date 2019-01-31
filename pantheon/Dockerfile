@@ -14,5 +14,5 @@ RUN apk add --update dos2unix && \
 # that rewrote the EOL to CRLF before we build the image. See issue #4
 RUN find /opt/pantheon/*.sh -type f -print0 | xargs -0 dos2unix
 
-# specify default command
+# specify default entrypoint to start the node
 ENTRYPOINT ["/opt/pantheon/node_start.sh"]

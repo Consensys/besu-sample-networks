@@ -13,7 +13,7 @@
 
 . ./.env
 
-docker-compose down
+docker-compose down -v
 docker-compose rm -sfv
 docker image rm quickstart/pantheon:$PANTHEON_VERSION
 docker image rm quickstart/block-explorer-light:$PANTHEON_VERSION
