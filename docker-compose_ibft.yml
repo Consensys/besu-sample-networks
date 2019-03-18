@@ -1,0 +1,65 @@
+version: '2.2'
+services:
+  bootnode:
+    build:
+      context: pantheon_ibft/.
+      args:
+        PANTHEON_VERSION: ${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-ibft
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
+    entrypoint: /opt/pantheon/bootnode_start.sh
+    command: ["--rpc-http-enabled",
+              "--rpc-http-api=ETH,NET,IBFT",
+              "--rpc-http-host=0.0.0.0",
+              "--rpc-http-port=8545",
+              "--rpc-http-cors-origins=*",
+              "--rpc-ws-enabled",
+              "--rpc-ws-api=ETH,NET,IBFT",
+              "--rpc-ws-host=0.0.0.0",
+              "--rpc-ws-port=8546",
+              "--host-whitelist=*"]
+    volumes:
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
+  node:
+    image: quickstart/pantheon:${PANTHEON_VERSION}-ibft
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
+    volumes:
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
+    depends_on:
+      - bootnode
+  rpcnode:
+    image: quickstart/pantheon:${PANTHEON_VERSION}-ibft
+    environment:
+      - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
+    command: ["--rpc-http-enabled",
+              "--rpc-http-api=ETH,NET,IBFT",
+              "--rpc-http-host=0.0.0.0",
+              "--rpc-http-port=8545",
+              "--rpc-http-cors-origins=*",
+              "--rpc-ws-enabled",
+              "--rpc-ws-api=ETH,NET,IBFT",
+              "--rpc-ws-host=0.0.0.0",
+              "--rpc-ws-port=8546",
+              "--host-whitelist=*"]
+    volumes:
+      - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
+    depends_on:
+      - bootnode
+  explorer:
+    build: block-explorer-light/.
+    image: quickstart/block-explorer-light:${PANTHEON_VERSION}-ibft
+    depends_on:
+      - rpcnode
+    ports:
+      - "${EXPLORER_PORT_MAPPING:-}80"
+volumes:
+  public-keys:
+  genesis:
