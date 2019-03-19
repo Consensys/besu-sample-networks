@@ -13,7 +13,15 @@
 
 . ./.env
 
-docker-compose down -v
-docker-compose rm -sfv
-docker image rm quickstart/pantheon:$PANTHEON_VERSION
-docker image rm quickstart/block-explorer-light:$PANTHEON_VERSION
+version=$QUICKSTART_VERSION
+composeFile=""
+if [ -f ${LOCK_FILE} ]; then
+    composeFile=`sed '1q;d' ${LOCK_FILE}`
+    version=`sed '2q;d' ${LOCK_FILE}`
+fi
+
+docker-compose ${composeFile} down -v
+docker-compose ${composeFile} rm -sfv
+docker image rm quickstart/pantheon:${version}
+docker image rm quickstart/block-explorer-light:${version}
+rm ${LOCK_FILE}

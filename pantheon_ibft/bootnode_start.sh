@@ -17,7 +17,7 @@ DATA_DIR=${PANTHEON_DATA_DIR:=/var/lib/pantheon/}
 
 PANTHEON_BINARY="/opt/pantheon/bin/pantheon $@ --data-path=${DATA_DIR}"
 
-PUBLIC_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode"
+PUBLIC_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode_pubkey"
 PUBLIC_ADDRESS_FILE="${PUBLIC_KEYS_DIR}bootnode_address"
 
 GENESIS_TEMPLATE_FILE=${DATA_DIR}genesis.json.template
@@ -30,13 +30,13 @@ ${PANTHEON_BINARY} public-key export --to="${PUBLIC_KEY_FILE}"
 raw_address=`${PANTHEON_BINARY} public-key export-address --to="${PUBLIC_ADDRESS_FILE}"`
 bootnode_address=`sed 's/^0x//' ${PUBLIC_ADDRESS_FILE}`
 
+# remove database as exporting public keys init the db but we don't have the right genesis yet
+rm -Rf ${DATA_DIR}/database
+
 addressJsonToEncode="[\"${bootnode_address}\"]"
 rlp=`echo ${addressJsonToEncode} | ${PANTHEON_BINARY} rlp encode`
 sedCommand="s/<RLP_EXTRA_DATA>/${rlp}/g"
 sed ${sedCommand} ${GENESIS_TEMPLATE_FILE} > ${GENESIS_FILE}
-
-# remove database as exporting public keys init the db but we don't have the right genesis yet
-rm -Rf ${DATA_DIR}/database
 
 # run bootnode with discovery but no bootnodes as it's our bootnode.
 ${PANTHEON_BINARY} --genesis-file="${GENESIS_FILE}"

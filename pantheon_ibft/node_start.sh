@@ -21,9 +21,16 @@ GENESIS_FILE=${GENESIS_FILE_DIR}genesis.json
 
 PANTHEON_BINARY="/opt/pantheon/bin/pantheon $@ --data-path=${DATA_DIR}"
 
-${PANTHEON_BINARY} public-key export --to="${PUBLIC_KEYS_DIR}${node_id}"
+PUBLIC_FILES_PATH_PREFIX=${PUBLIC_KEYS_DIR}${node_id}
+${PANTHEON_BINARY} public-key export --to="${PUBLIC_FILES_PATH_PREFIX}_pubkey"
 
-BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode"
+# export address to be able to add this node as a validator
+raw_address=`${PANTHEON_BINARY} public-key export-address --to="${PUBLIC_FILES_PATH_PREFIX}_address"`
+
+# remove database as exporting public keys init the db but we don't have the right genesis yet
+rm -Rf ${DATA_DIR}/database
+
+BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode_pubkey"
 
 # sleep loop to wait for the public key file to be written
 while [ ! -f $BOOTNODE_KEY_FILE ]
@@ -45,9 +52,6 @@ boonode_ip=`getent hosts bootnode | awk '{ print $1 }'`
 BOOTNODE_P2P_PORT="30303"
 
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:${BOOTNODE_P2P_PORT}"
-
-# remove database as exporting public keys init the db but we don't have the right genesis yet
-rm -Rf ${DATA_DIR}/database
 
 # run with bootnode param
 ${PANTHEON_BINARY} --bootnodes=$bootnode_enode_address --genesis-file="${GENESIS_FILE}"

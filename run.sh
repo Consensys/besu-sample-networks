@@ -11,20 +11,32 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+. ./.env
+
 me=`basename "$0"`
 DEFAULT_SCALING=4
 scaleNode=$DEFAULT_SCALING
+composeFile=""
 
 PARAMS=""
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -h|--help)
+
+displayUsage()
+{
       echo "Usage: ${me} [OPTIONS] [PARAMS]"
       echo "    -p or --explorer-port <NUMBER>  : the port number you want to use for the endpoint
                                       mapping, otherwise default is a port automatically selected by Docker."
       echo "    -s or --scale-nodes <NUMBER>    : the quantity of regular nodes you want to run on your network,
                                       default is ${DEFAULT_SCALING}"
+      echo "    -c or --consensus <clique|ibft>    : the consensus mechanism that you want to run on your network,
+                                      default is ethash"
       exit 0
+}
+
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      displayUsage
       ;;
     -p|--explorer-port)
       export EXPLORER_PORT_MAPPING="${2}:"
@@ -34,18 +46,38 @@ while [ $# -gt 0 ]; do
       scaleNode=${2}
       shift 2
       ;;
+    -c|--consensus)
+      case "${2}" in
+        ibft)
+            composeFile="-f docker-compose_ibft.yml"
+            export QUICKSTART_VERSION="${PANTHEON_VERSION}-ibft"
+            ;;
+        clic)
+            composeFile="-f docker-compose_clique.yml"
+            export QUICKSTART_VERSION="${PANTHEON_VERSION}-clique"
+            ;;
+        ethash)
+            ;;
+        *)
+            echo "Error: Unsupported consensus value." >&2
+            displayUsage
+      esac
+      shift 2
+      ;;
     --) # end argument parsing
       shift
       break
       ;;
     -*|--*=) # unsupported flags
-      echo "Error: Unsupported flag $1, try ${me} -h or ${me} --help for complete usage help." >&2
-      exit 1
+      echo "Error: Unsupported flag." >&2
+      displayUsage
       ;;
   esac
 done
 
 # Build and run containers and network
-docker-compose up -d --scale node=${scaleNode}
+echo "${composeFile}" > ${LOCK_FILE}
+echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
+docker-compose ${composeFile} up -d --scale node=${scaleNode}
 
 ./list.sh
