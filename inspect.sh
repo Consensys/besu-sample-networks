@@ -1,10 +1,38 @@
 #!/bin/sh
 
-ids=`docker-compose -f docker-compose_ibft.yml ps -q`
+echo "---------------------------------"
+echo "Quickstart containers information"
+echo "---------------------------------"
 
-while read -r id; do
-    name=`docker inspect --format='{{.Name}}' $id`
-    echo "${id:0:12} : $name"
-done <<< "$ids"
+composeFile="-f docker-compose_ibft.yml"
 
-# TODO display public keys and addresses for each node
+containerIds=`docker-compose ${composeFile} ps -q`
+explorerMapping=`docker-compose ${composeFile} port explorer 80`
+HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
+
+while read -r containerId; do
+
+    keysAndAddress=`docker run --rm -v pantheon-quickstart_public-keys:/tmp/keys perl:slim /bin/sh -c "grep '' /tmp/keys/${containerId:0:12}* 2>/dev/null \
+      | grep -oE '_(.+:0x.*$)' | sed 's/_//' | sed 's/:/ : /'"`
+
+    if [ -n "${keysAndAddress}" ]; then
+
+      containerName=`docker inspect --format='{{.Name}}' ${containerId}`
+      projectName=`docker inspect --format='{{index .Config.Labels "com.docker.compose.project"}}' ${containerId}`
+      nodeName=`docker inspect --format='{{index .Config.Labels "com.docker.compose.service"}}' ${containerId}`
+      nodeNumber=`docker inspect --format='{{index .Config.Labels "com.docker.compose.container-number"}}' ${containerId}`
+      nodeInstances=`docker-compose ${composeFile} ps | grep -c "${projectName}_${nodeName}_"`
+
+      if [ "${nodeInstances}" -gt 1 ]; then
+        nodeFullName=${projectName}_${nodeName}_${nodeNumber}
+        scaled="(scaled ${nodeInstances} times)"
+      else
+        nodeFullName=${nodeName}
+      fi
+      echo "${nodeFullName} (${containerId:0:12}) ${scaled}"
+      echo "${keysAndAddress}"
+      echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/${nodeFullName}/jsonrpc"
+      echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/${nodeFullName}/jsonws"
+      echo "---------------------------------"
+    fi
+done <<< "${containerIds}"

@@ -5,20 +5,20 @@ server {
     #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
-#    location /jsonrpc {
-#        rewrite /jsonrpc/?(.*) /$1  break;
-#        proxy_pass http://rpcnode:8545;
-#        proxy_redirect     off;
-#        proxy_set_header   Host $host;
-#    }
-#
-#    location /jsonws {
-#        rewrite /jsonws/?(.*) /$1  break;
-#        proxy_pass http://rpcnode:8546;
-#        proxy_http_version 1.1;
-#        proxy_set_header Upgrade $http_upgrade;
-#        proxy_set_header Connection "Upgrade";
-#    }
+    location /jsonrpc {
+        rewrite /jsonrpc/?(.*) /$1  break;
+        proxy_pass http://rpcnode:8545;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+    }
+
+    location /jsonws {
+        rewrite /jsonws/?(.*) /$1  break;
+        proxy_pass http://rpcnode:8546;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+    }
 
     location ~* /(?<serviceName>(.*))/jsonrpc {
       resolver 127.0.0.11 ipv6=off;
