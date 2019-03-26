@@ -22,16 +22,21 @@ PARAMS=""
 
 displayUsage()
 {
-      echo "Usage: ${me} [OPTIONS] [PARAMS]"
-      echo "    -p or --explorer-port <NUMBER>  : the port number you want to use for the endpoint
-                                      mapping, otherwise default is a port automatically selected by Docker."
-      echo "    -s or --scale-nodes <NUMBER>    : the quantity of regular nodes you want to run on your network,
-                                      default is ${DEFAULT_SCALING}"
-      echo "    -c or --consensus <clique|ibft>    : the consensus mechanism that you want to run on your network,
-                                      default is ethash"
-      exit 0
+  echo "Usage: ${me} [OPTIONS]"
+  echo "    -p or --explorer-port <NUMBER>  : the port number you want to use for the endpoint
+                                  mapping, otherwise default is a port automatically selected by Docker."
+  echo "    -s or --scale-nodes <NUMBER>    : the quantity of regular nodes you want to run on your network,
+                                  default is ${DEFAULT_SCALING}"
+  echo "    -c or --consensus <clique|ibft>    : the consensus mechanism that you want to run on your network,
+                                  default is ethash"
+  exit 0
 }
 
+if [ -f ${LOCK_FILE} ];then
+  echo "Quickstart already in use (${LOCK_FILE} present)." >&2
+  echo "Restart with ./resume.sh or remove with ./remove.sh before running again." >&2
+  exit 1
+fi
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -48,13 +53,10 @@ while [ $# -gt 0 ]; do
       ;;
     -c|--consensus)
       case "${2}" in
-        ibft)
-            composeFile="-f docker-compose_ibft.yml"
-            export QUICKSTART_VERSION="${PANTHEON_VERSION}-ibft"
-            ;;
-        clic)
-            composeFile="-f docker-compose_clique.yml"
-            export QUICKSTART_VERSION="${PANTHEON_VERSION}-clique"
+        ibft|clique)
+            export QUICKSTART_POA="${2}"
+            export QUICKSTART_VERSION="${PANTHEON_VERSION}-${QUICKSTART_POA}"
+            composeFile="-f docker-compose_poa.yml"
             ;;
         ethash)
             ;;

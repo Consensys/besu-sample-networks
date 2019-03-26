@@ -2,21 +2,21 @@ version: '2.2'
 services:
   bootnode:
     build:
-      context: pantheon_clique/.
+      context: pantheon_${QUICKSTART_POA:-ibft}/.
       args:
         PANTHEON_VERSION: ${PANTHEON_VERSION}
-    image: quickstart/pantheon:${PANTHEON_VERSION}-clique
+    image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA:-ibft}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
     entrypoint: /opt/pantheon/bootnode_start.sh
     command: ["--rpc-http-enabled",
-              "--rpc-http-api=WEB3,ETH,NET,CLIQUE",
+              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
               "--rpc-http-cors-origins=*",
               "--rpc-ws-enabled",
-              "--rpc-ws-api=WEB3,ETH,NET,CLIQUE",
+              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--host-whitelist=*"]
@@ -24,17 +24,17 @@ services:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
   node:
-    image: quickstart/pantheon:${PANTHEON_VERSION}-clique
+    image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA:-ibft}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
     command: ["--rpc-http-enabled",
-              "--rpc-http-api=WEB3,ETH,NET,CLIQUE",
+              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
               "--rpc-http-cors-origins=*",
               "--rpc-ws-enabled",
-              "--rpc-ws-api=WEB3,ETH,NET,CLIQUE",
+              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--host-whitelist=*"]
@@ -44,15 +44,17 @@ services:
     depends_on:
       - bootnode
   rpcnode:
-    image: quickstart/pantheon:${PANTHEON_VERSION}-clique
+    image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA:-ibft}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
     command: ["--rpc-http-enabled",
+              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
               "--rpc-http-cors-origins=*",
               "--rpc-ws-enabled",
+              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA:-ibft}",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--host-whitelist=*"]
@@ -63,7 +65,7 @@ services:
       - bootnode
   explorer:
     build: block-explorer-light/.
-    image: quickstart/block-explorer-light:${PANTHEON_VERSION}-clique
+    image: quickstart/block-explorer-light:${PANTHEON_VERSION}-${QUICKSTART_POA:-ibft}
     depends_on:
       - rpcnode
     ports:
