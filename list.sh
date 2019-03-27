@@ -12,22 +12,17 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
-
-me=`basename "$0"`
-
-version=$QUICKSTART_VERSION
-composeFile=""
-if [ -f ${LOCK_FILE} ]; then
-  composeFile=`sed '1q;d' ${LOCK_FILE}`
-  version=`sed '2q;d' ${LOCK_FILE}`
-else
-  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
-  echo "Run it with ./run.sh first" >&2
-  exit 1
-fi
+. .common.sh
 
 EXPLORER_SERVICE=explorer
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
+
+# Displays links to exposed services
+echo "${bold}*************************************"
+echo "Pantheon Quickstart ${version}"
+echo "*************************************${normal}"
+echo "List endpoints and services"
+echo "----------------------------------"
 
 # Displays services list with port mapping
 docker-compose ps
@@ -35,10 +30,6 @@ docker-compose ps
 # Get individual port mapping for exposed services
 explorerMapping=`docker-compose port explorer 80`
 
-
-# Displays links to exposed services
-
-echo "****************************************************************"
 dots=""
 maxRetryCount=50
 while [ "$(curl -m 1 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:${explorerMapping##*:})" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
@@ -48,16 +39,13 @@ do
   sleep 1
 done
 
+echo "****************************************************************"
 if [ ${#dots} -gt ${maxRetryCount} ]; then
-  echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !   *                                                                             "
+  echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerMapping##*:}$ !"
   echo "****************************************************************"
 else
-  echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc   *"
-  echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws   *"
-  echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}   *                                                                             "
+  echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc"
+  echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws"
+  echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}"
   echo "****************************************************************"
-fi
-
-if [[ ${composeFile} == *"poa"* ]]; then
-  ./inspect-poa.sh
 fi

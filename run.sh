@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -13,7 +13,9 @@
 
 . ./.env
 
-me=`basename "$0"`
+NO_LOCK_REQUIRED=true
+. .common.sh
+
 DEFAULT_SCALING=4
 scaleNode=$DEFAULT_SCALING
 composeFile=""
@@ -22,21 +24,21 @@ PARAMS=""
 
 displayUsage()
 {
+  echo "${bold}*************************"
+  echo "Pantheon Quickstart usage"
+  echo "*************************${normal}"
+  echo "This script creates and start a local private Pantheon network using Docker."
+  echo "You can scale the number of nodes and select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
-  echo "    -p or --explorer-port <NUMBER>  : the port number you want to use for the endpoint
-                                  mapping, otherwise default is a port automatically selected by Docker."
-  echo "    -s or --scale-nodes <NUMBER>    : the quantity of regular nodes you want to run on your network,
-                                  default is ${DEFAULT_SCALING}"
-  echo "    -c or --consensus <clique|ibft>    : the consensus mechanism that you want to run on your network,
-                                  default is ethash"
+  echo "    -p or --explorer-port <NUMBER>          : the port number you want to use for the endpoint
+                                              mapping, otherwise default is a port
+                                              automatically selected by Docker."
+  echo "    -s or --scale-nodes <NUMBER>            : the quantity of regular nodes you want to run
+                                              on your network, default is ${DEFAULT_SCALING}"
+  echo "    -c or --consensus <ibft2|clique|ethash> : the consensus mechanism that you want to run
+                                              on your network, default is ethash"
   exit 0
 }
-
-if [ -f ${LOCK_FILE} ];then
-  echo "Quickstart already in use (${LOCK_FILE} present)." >&2
-  echo "Restart with ./resume.sh or remove with ./remove.sh before running again." >&2
-  exit 1
-fi
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -86,15 +88,18 @@ echo "${composeFile}" > ${LOCK_FILE}
 echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
 echo "scale:${scaleNode}" >> ${LOCK_FILE}
 
-bold=$(tput bold)
-normal=$(tput sgr0)
 echo "${bold}*************************************"
 echo "Pantheon Quickstart ${QUICKSTART_VERSION}"
 echo "*************************************${normal}"
-echo "Starting containers."
+echo "Start network"
 echo "--------------------"
 
 
 docker-compose ${composeFile} up -d --scale node=${scaleNode}
 
+#list services and endpoints
 ./list.sh
+#list individual nodes endpoints in case we run a PoA network
+if [[ ${composeFile} == *"poa"* ]]; then
+  ./inspect-poa.sh
+fi

@@ -12,16 +12,7 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
-
-composeFile=""
-if [ -f ${LOCK_FILE} ]; then
-  composeFile=`sed '1q;d' ${LOCK_FILE}`
-  version=`sed '2q;d' ${LOCK_FILE}`
-else
-  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
-  echo "Run it with ./run.sh first." >&2
-  exit 1
-fi
+. .common.sh
 
 if [[ ${composeFile} != *"poa"* ]]; then
   echo "Quickstart is not running a PoA network." >&2
@@ -29,13 +20,10 @@ if [[ ${composeFile} != *"poa"* ]]; then
   exit 1
 fi
 
-bold=$(tput bold)
-normal=$(tput sgr0)
-
 echo "${bold}*************************************"
 echo "Pantheon Quickstart ${version}"
 echo "*************************************${normal}"
-echo "Listing PoA containers information"
+echo "List PoA nodes information"
 echo "----------------------------------"
 
 containerIds=`docker-compose ${composeFile} ps -q`
@@ -46,13 +34,15 @@ rpcNodeHttpEndpoint="http://${HOST}:${explorerMapping##*:}/jsonrpc"
 containerCount=`grep -c "" <<< "${containerIds}"`
 
 # retrieve list of node addresses
-addressFilesWaitCommand="counter=0; while [ \$(ls -1 /tmp/keys/*_address | wc -l) -lt ${containerCount} ] && [ \"\$counter\" -lt \"30\" ];do sleep 1; let \"counter++\"; done;"
+addressFilesWaitCommand="counter=0; while [ \$(ls -1 /tmp/keys/*_address 2>/dev/null | wc -l 2>/dev/null) -lt ${containerCount} ] && [ \"\$counter\" -lt \"30\" ];do sleep 1; printf '.' >&2; let \"counter++\"; done;"
 addressRetrievalCommand="grep \"0x\" /tmp/keys/*_address 2>/dev/null"
 addressList=`docker run --rm -v pantheon-quickstart_public-keys:/tmp/keys alpine /bin/sh -c "${addressFilesWaitCommand} ${addressRetrievalCommand}"`
 
 if [ -z "${addressList}" ]; then
   echo "Nodes addresses not yet available, please try again later."
   exit 1
+else
+  echo "Nodes addresses found."
 fi
 
 # retrieve validators list

@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -12,14 +12,12 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
+. .common.sh
 
-composeFile=""
-if [ -f ${LOCK_FILE} ]; then
-  composeFile=`sed '1q;d' ${LOCK_FILE}`
-else
-  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
-  echo "Run it with ./run.sh first" >&2
-  exit 1
-fi
+echo "${bold}*************************************"
+echo "Pantheon Quickstart ${version}"
+echo "*************************************${normal}"
+echo "Stop network"
+echo "----------------------------------"
 
 docker-compose ${composeFile} stop

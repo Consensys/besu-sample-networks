@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -12,8 +12,7 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
-
-me=`basename "$0"`
+. .common.sh
 
 displayUsage()
 {
@@ -44,16 +43,11 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-version=$QUICKSTART_VERSION
-composeFile=""
-if [ -f ${LOCK_FILE} ]; then
-  composeFile=`sed '1q;d' ${LOCK_FILE}`
-  version=`sed '2q;d' ${LOCK_FILE}`
-else
-  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
-  echo "Run it with ./run.sh first" >&2
-  exit 1
-fi
+echo "${bold}*************************************"
+echo "Pantheon Quickstart ${version}"
+echo "*************************************${normal}"
+echo "Stop and remove network"
+echo "----------------------------------"
 
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
@@ -64,3 +58,4 @@ if [ "${keepImages}" = "false" ];then
 fi
 
 rm ${LOCK_FILE}
+echo "Lock file ${LOCK_FILE} removed"
