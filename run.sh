@@ -53,16 +53,20 @@ while [ $# -gt 0 ]; do
       ;;
     -c|--consensus)
       case "${2}" in
-        ibft|clique)
-            export QUICKSTART_POA="${2}"
-            export QUICKSTART_VERSION="${PANTHEON_VERSION}-${QUICKSTART_POA}"
-            composeFile="-f docker-compose_poa.yml"
-            ;;
+        ibft2|clique)
+          # options values and api values are not necessarily identical.
+          ibft2=ibft # value to use for ibft2 option
+          clique=clique # value to use for clique option
+          export QUICKSTART_POA_NAME="${2}"
+          export QUICKSTART_POA_API="${!2}"
+          export QUICKSTART_VERSION="${PANTHEON_VERSION}-${QUICKSTART_POA_NAME}"
+          composeFile="-f docker-compose_poa.yml"
+          ;;
         ethash)
-            ;;
+          ;;
         *)
-            echo "Error: Unsupported consensus value." >&2
-            displayUsage
+          echo "Error: Unsupported consensus value." >&2
+          displayUsage
       esac
       shift 2
       ;;

@@ -11,9 +11,15 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+. ./.env
+
 composeFile=""
 if [ -f ${LOCK_FILE} ]; then
-    composeFile=`sed '1q;d' ${LOCK_FILE}`
+  composeFile=`sed '1q;d' ${LOCK_FILE}`
+else
+  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
+  echo "Run it with ./run.sh first" >&2
+  exit 1
 fi
 
 docker-compose ${composeFile} stop

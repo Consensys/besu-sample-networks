@@ -11,7 +11,20 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+. ./.env
+
 me=`basename "$0"`
+
+version=$QUICKSTART_VERSION
+composeFile=""
+if [ -f ${LOCK_FILE} ]; then
+  composeFile=`sed '1q;d' ${LOCK_FILE}`
+  version=`sed '2q;d' ${LOCK_FILE}`
+else
+  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
+  echo "Run it with ./run.sh first" >&2
+  exit 1
+fi
 
 EXPLORER_SERVICE=explorer
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
@@ -43,4 +56,8 @@ else
   echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws   *"
   echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}   *                                                                             "
   echo "****************************************************************"
+fi
+
+if [[ ${composeFile} == *"poa"* ]]; then
+  ./inspect-poa.sh
 fi

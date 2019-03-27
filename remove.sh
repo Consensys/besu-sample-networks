@@ -47,8 +47,12 @@ done
 version=$QUICKSTART_VERSION
 composeFile=""
 if [ -f ${LOCK_FILE} ]; then
-    composeFile=`sed '1q;d' ${LOCK_FILE}`
-    version=`sed '2q;d' ${LOCK_FILE}`
+  composeFile=`sed '1q;d' ${LOCK_FILE}`
+  version=`sed '2q;d' ${LOCK_FILE}`
+else
+  echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
+  echo "Run it with ./run.sh first" >&2
+  exit 1
 fi
 
 docker-compose ${composeFile} down -v
