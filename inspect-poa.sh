@@ -19,27 +19,43 @@ if [ -f ${LOCK_FILE} ]; then
   version=`sed '2q;d' ${LOCK_FILE}`
 else
   echo "Quickstart is not running (${LOCK_FILE} not present)." >&2
-  echo "Run it with ./run.sh first" >&2
+  echo "Run it with ./run.sh first." >&2
+  exit 1
+fi
+
+if [[ ${composeFile} != *"poa"* ]]; then
+  echo "Quickstart is not running a PoA network." >&2
+  echo "Run ./run.sh -h to see available options." >&2
   exit 1
 fi
 
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-echo "*************************************"
-echo "*************************************"
-echo "${bold}Pantheon Quickstart ${version}${normal}"
-echo "PoA containers information listing"
-echo "*************************************"
-echo "*************************************"
+echo "${bold}*************************************"
+echo "Pantheon Quickstart ${version}"
+echo "*************************************${normal}"
+echo "Listing PoA containers information"
+echo "----------------------------------"
 
 containerIds=`docker-compose ${composeFile} ps -q`
 explorerMapping=`docker-compose ${composeFile} port explorer 80`
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
-
-addressList=`docker run --rm -v pantheon-quickstart_public-keys:/tmp/keys alpine /bin/sh -c "grep '0x' /tmp/keys/*_address 2>/dev/null"`
-
 rpcNodeHttpEndpoint="http://${HOST}:${explorerMapping##*:}/jsonrpc"
+
+containerCount=`grep -c "" <<< "${containerIds}"`
+
+# retrieve list of node addresses
+addressFilesWaitCommand="counter=0; while [ \$(ls -1 /tmp/keys/*_address | wc -l) -lt ${containerCount} ] && [ \"\$counter\" -lt \"30\" ];do sleep 1; let \"counter++\"; done;"
+addressRetrievalCommand="grep \"0x\" /tmp/keys/*_address 2>/dev/null"
+addressList=`docker run --rm -v pantheon-quickstart_public-keys:/tmp/keys alpine /bin/sh -c "${addressFilesWaitCommand} ${addressRetrievalCommand}"`
+
+if [ -z "${addressList}" ]; then
+  echo "Nodes addresses not yet available, please try again later."
+  exit 1
+fi
+
+# retrieve validators list
 validatorList=`curl -s -X POST --data '{"jsonrpc":"2.0","method":"ibft_getValidatorsByBlockNumber","params":["latest"],"id":1}' ${rpcNodeHttpEndpoint} | grep 'result'`
 
 while read -r containerId; do

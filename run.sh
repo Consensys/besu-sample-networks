@@ -84,6 +84,17 @@ done
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
 echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
+echo "scale:${scaleNode}" >> ${LOCK_FILE}
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+echo "${bold}*************************************"
+echo "Pantheon Quickstart ${QUICKSTART_VERSION}"
+echo "*************************************${normal}"
+echo "Starting containers."
+echo "--------------------"
+
+
 docker-compose ${composeFile} up -d --scale node=${scaleNode}
 
 ./list.sh
