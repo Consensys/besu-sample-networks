@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -39,9 +39,8 @@ cp ${PUBLIC_ADDRESS_FILE} ${PUBLIC_ADDRESS_FILE_BY_ID}
 # remove database as exporting public keys init the db but we don't have the right genesis yet
 rm -Rf ${DATA_DIR}/database
 
-addressJsonToEncode="[\"${bootnode_address}\"]"
-rlp=`echo ${addressJsonToEncode} | ${PANTHEON_BINARY} rlp encode`
-sedCommand="s/<RLP_EXTRA_DATA>/${rlp}/g"
+# replace placeholder by address in genesis
+sedCommand="s/<EXTRA_DATA_ADDRESSES>/${bootnode_address}/g"
 sed ${sedCommand} ${GENESIS_TEMPLATE_FILE} > ${GENESIS_FILE}
 
 # run bootnode with discovery but no bootnodes as it's our bootnode.
