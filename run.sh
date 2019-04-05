@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -u
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -11,10 +11,10 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-. ./.env
-
 NO_LOCK_REQUIRED=true
-. .common.sh
+
+. ./.env
+. ./.common.sh
 
 DEFAULT_SCALING=4
 scaleNode=$DEFAULT_SCALING
@@ -57,7 +57,11 @@ while [ $# -gt 0 ]; do
       case "${2}" in
         ibft2|clique)
           # options values and api values are not necessarily identical.
-          ibft2=ibft # value to use for ibft2 option
+          # value to use for ibft2 option as required for Pantheon --rpc-http-api and --rpc-ws-api
+          # we want to explicitely display IBFT2 in the quickstart options to prevent people from
+          # being confused with previous version IBFT, however the RPC API remains commons, so the name
+          # that's the reason of this not obvious mapping.
+          ibft2=ibft
           clique=clique # value to use for clique option
           export QUICKSTART_POA_NAME="${2}"
           export QUICKSTART_POA_API="${!2}"
@@ -100,6 +104,6 @@ docker-compose ${composeFile} up -d --scale node=${scaleNode}
 #list services and endpoints
 ./list.sh
 #list individual nodes endpoints in case we run a PoA network
-if [[ ${composeFile} == *"poa"* ]]; then
-  ./inspect-poa.sh
+if [[ "${QUICKSTART_POA_API}" == "${ibft2}" ]]; then
+  ./inspect-ibft2.sh
 fi

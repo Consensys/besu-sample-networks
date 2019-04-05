@@ -10,7 +10,7 @@ services:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
     entrypoint: /opt/pantheon/bootnode_start.sh
-    command: ["--rpc-http-enabled",
+    command: &base_options ["--rpc-http-enabled",
               "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
@@ -28,36 +28,18 @@ services:
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
-    command: ["--rpc-http-enabled",
-              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-http-host=0.0.0.0",
-              "--rpc-http-port=8545",
-              "--rpc-http-cors-origins=*",
-              "--rpc-ws-enabled",
-              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-ws-host=0.0.0.0",
-              "--rpc-ws-port=8546",
-              "--host-whitelist=*"]
+    command: *base_options
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
     depends_on:
       - bootnode
-  rpcnode:
+  rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA_NAME-ibft2}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - PANTHEON_GENESIS_FILE_DIRECTORY=${PANTHEON_GENESIS_FILE_DIRECTORY}
-    command: ["--rpc-http-enabled",
-              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-http-host=0.0.0.0",
-              "--rpc-http-port=8545",
-              "--rpc-http-cors-origins=*",
-              "--rpc-ws-enabled",
-              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-ws-host=0.0.0.0",
-              "--rpc-ws-port=8546",
-              "--host-whitelist=*"]
+    command: *base_options
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}

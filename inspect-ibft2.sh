@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -u
 
 # Copyright 2018 ConsenSys AG.
 #
@@ -11,19 +11,21 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-. ./.env
-. .common.sh
+NO_LOCK_REQUIRED=false
 
-if [[ ${composeFile} != *"poa"* ]]; then
-  echo "Quickstart is not running a PoA network." >&2
-  echo "Run ./run.sh -h to see available options." >&2
+. ./.env
+. ./.common.sh
+
+if [[ ${version} != *"ibft"* ]]; then
+  echo "Quickstart is not running an IBFT 2 network." >&2
+  echo "Run it with ./run.sh -c ibft2" >&2
   exit 1
 fi
 
 echo "${bold}*************************************"
 echo "Pantheon Quickstart ${version}"
 echo "*************************************${normal}"
-echo "List PoA nodes information"
+echo "List IBFT 2 nodes information"
 echo "----------------------------------"
 
 containerIds=`docker-compose ${composeFile} ps -q`
@@ -82,12 +84,9 @@ while read -r containerId; do
       httpEndpoint="http://${HOST}:${explorerMapping##*:}/${nodeFullName}/jsonrpc"
       wsEndpoint="ws://${HOST}:${explorerMapping##*:}/${nodeFullName}/jsonws"
 
-#      peers=`curl -s -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' ${httpEndpoint} | grep 'result' | grep -oE '0x[0-9a-zA-Z]+' | sed 's/0x//'`
-
       echo "${bold}Node container name/id : ${nodeFullName} / ${shortId}${normal}"
       echo "Scaled node : ${scaled}"
       echo "Validator : ${isValidator}"
-#      echo "Peers : $((16#${peers}))"
       echo "Node address : ${nodeAddress}"
       echo "JSON-RPC HTTP service endpoint      : ${httpEndpoint}"
       echo "JSON-RPC WebSocket service endpoint : ${wsEndpoint}"

@@ -5,6 +5,7 @@ server {
     #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
+    # a common HTTP RPC entrypoint mainly for the explorer service
     location /jsonrpc {
         rewrite /jsonrpc/?(.*) /$1  break;
         proxy_pass http://rpcnode:8545;
@@ -12,6 +13,7 @@ server {
         proxy_set_header   Host $host;
     }
 
+    # a common WS RPC entrypoint mainly for the explorer service
     location /jsonws {
         rewrite /jsonws/?(.*) /$1  break;
         proxy_pass http://rpcnode:8546;
@@ -20,7 +22,9 @@ server {
         proxy_set_header Connection "Upgrade";
     }
 
+    # a generic HTTP RPC entrypoint pointing to each available node
     location ~* /(?<serviceName>(.*))/jsonrpc {
+      # Use Docker default local network DNS IP as resolver
       resolver 127.0.0.11 ipv6=off;
       rewrite /jsonrpc/?(.*) /$1  break;
       proxy_pass http://${serviceName}:8545;
@@ -28,7 +32,9 @@ server {
       proxy_set_header   Host $host;
     }
 
+    # a generic WS RPC entrypoint pointing to each available node
     location ~* /(?<serviceName>(.*))/jsonws {
+      # Use Docker default local network DNS IP as resolver
       resolver 127.0.0.11 ipv6=off;
       rewrite /jsonws/?(.*) /$1  break;
       proxy_pass http://${serviceName}:8546;
