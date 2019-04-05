@@ -43,10 +43,11 @@ the correct parameters.
 Pantheon nodes as well as Orion nodes which include 3 nodes with privacy
 enabled.
 Where the node details are as follows:
-|Name   | Pantheon Node address                      | Orion node key                               |
-| ----- | ------------------------------------------ | -------------------------------------------- |
-| node1 | 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 | A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo= |
-| node2 | 0x627306090abab3a6e1400e9345bc60c78a8bef57 | Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs= |
+
+Name  | Pantheon Node address                      | Orion node key 
+----- | ---- | ---- |
+node1 | 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 | A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo=
+node2 | 0x627306090abab3a6e1400e9345bc60c78a8bef57 | Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs=
 
 ### Create and Deploy the Contract
 `./scripts/create_contract.sh` deploys the EventEmitter Smart Contract by
