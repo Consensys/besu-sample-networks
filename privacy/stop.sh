@@ -11,10 +11,4 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-. ./.env
-
-docker-compose -f docker-compose-private.yml down -v
-docker-compose -f docker-compose-private.yml rm -sfv
-docker image rm quickstart/pantheon:$PANTHEON_VERSION
-docker image rm quickstart/orion:$ORION_VERSION
-docker image rm quickstart/block-explorer-light:$PANTHEON_VERSION
+docker-compose stop

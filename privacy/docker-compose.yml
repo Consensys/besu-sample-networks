@@ -1,18 +1,19 @@
-version: '2.2'
+version: '3.2'
 services:
   bootnode:
     build:
       context: pantheon
       args:
         PANTHEON_VERSION: ${PANTHEON_VERSION}
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     entrypoint: /opt/pantheon/bootnode_start.sh --network=dev
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+
   minernode:
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
@@ -36,14 +37,12 @@ services:
     entrypoint: /orion/build/bin/orion ${ORION_DATA_FOLDER3}/orion.conf
 
   node1:
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
-              "--node-private-key-file=/opt/pantheon/node1-key",
-              "--privacy-enabled",
+              "--privacy-enabled=true",
               "--privacy-url=${ORION_URL1}",
-              "--privacy-public-key-file=${ORION_KEY_FILE1}",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
@@ -55,20 +54,22 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - ${PWD}/pantheon/data1:/var/lib/pantheon
+      - ${PWD}/orion/orion1:/etc/pantheon
     depends_on:
       - bootnode
       - orion1
     ports:
       - 20000:8545
       - 20001:8546
+
   node2:
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
               "--privacy-enabled=true",
               "--privacy-url=${ORION_URL2}",
-              "--privacy-public-key-file=${ORION_KEY_FILE2}",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
@@ -80,6 +81,8 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - ${PWD}/pantheon/data2:/var/lib/pantheon
+      - ${PWD}/orion/orion2:/etc/pantheon
     depends_on:
       - bootnode
       - orion2
@@ -87,13 +90,12 @@ services:
       - 20002:8545
       - 20003:8546
   node3:
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
               "--privacy-enabled=true",
               "--privacy-url=${ORION_URL3}",
-              "--privacy-public-key-file=${ORION_KEY_FILE3}",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",
               "--rpc-http-port=8545",
@@ -105,6 +107,7 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+      - ${PWD}/orion/orion3:/etc/pantheon
     depends_on:
       - bootnode
       - orion3
@@ -113,7 +116,7 @@ services:
       - 20005:8546
 
   rpcnode:
-    image: quickstart/pantheon:${PANTHEON_VERSION}
+    image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     command: ["--network=dev",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",

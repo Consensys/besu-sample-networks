@@ -7,21 +7,19 @@ RUN apt-get -qq update && \
 
 RUN git clone https://github.com/PegaSysEng/orion.git && \
     cd orion && \
-    ./gradlew build
+    ./gradlew build && \
+     mv ./build/distributions/orion*.tar.gz /tmp
 
-WORKDIR orion
-
-RUN mv build/distributions/orion*.tar.gz /tmp
 WORKDIR /
 
-RUN rm -rf /orion/*
-RUN mv /tmp/orion* /orion
+RUN rm -rf /orion/* && \
+    mv /tmp/orion* /orion
 
 WORKDIR orion
 
-RUN tar -xvzf orion*
-RUN rm orion*.tar.gz
-RUN mv orion* build
+RUN tar -xvzf orion* && \
+    rm orion*.tar.gz && \
+    mv orion* build
 
 COPY data /orion/data
 

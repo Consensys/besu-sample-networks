@@ -8,6 +8,10 @@ httpEndpoint=""
 if [[ $# != 6 ]]
 then
   echo "Unsupported flags, use -h|--help for complete usage"
+  echo "Usage: ${me}"
+  echo "    -txHash|--transactionHash : the transaction hash returned by executing a transaction"
+  echo "    -orionPubKey|--orionPublicKey : the public key with which Orion was started"
+  echo "    -httpEndpoint|--httpNodeEndpoint : the HTTP service endpoint of node"
   exit 0
 fi
 
@@ -15,20 +19,20 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help)
       echo "Usage: ${me}"
-      echo "    -txHash : the transaction hash returned by executing a transaction"
-      echo "    -orionPubKey : the public key with which Orion was started"
-      echo "    -httpEndpoint : the HTTP service endpoint of node"
+      echo "    -txHash|--transactionHash : the transaction hash returned by executing a transaction"
+      echo "    -orionPubKey|--orionPublicKey : the public key with which Orion was started"
+      echo "    -httpEndpoint|--httpNodeEndpoint : the HTTP service endpoint of node"
       exit 0
       ;;
-    -txHash)
+    -txHash|--transactionHash)
       txHash="${2}"
       shift 2
       ;;
-    -orionPubKey)
+    -orionPubKey|--orionPublicKey)
       orionPubKey="${2}"
       shift 2
       ;;
-    -httpEndpoint)
+    -httpEndpoint|--httpNodeEndpoint)
       httpEndpoint="${2}"
       shift 2
       ;;

@@ -17,10 +17,10 @@ EXPLORER_SERVICE=explorer
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays services list with port mapping
-docker-compose -f docker-compose-private.yml ps
+docker-compose ps
 
 # Get individual port mapping for exposed services
-explorerMapping=`docker-compose -f docker-compose-private.yml port explorer 80`
+explorerMapping=`docker-compose port explorer 80`
 
 
 # Displays links to exposed services

@@ -38,6 +38,6 @@ while [ $# -gt 0 ]; do
 done
 
 # Build and run containers and network
-docker-compose -f docker-compose-private.yml up --build --force-recreate -d
+docker-compose up --force-recreate -d
 
-./list-private.sh
+./list.sh
