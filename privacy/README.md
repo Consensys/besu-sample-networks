@@ -36,12 +36,17 @@ The transaction receipts of the corresponding transaction can be viewed by execu
 the correct parameters. 
 
 
-## Execution Process to Create a Permissioned Network
+## Execution Process to Create a Privacy enabled Network
 
 ### Build Docker Images and Start Services and Network
-`./run-private.sh` creates docker images for configuring a network of
+`./run.sh` creates docker images for configuring a network of
 Pantheon nodes as well as Orion nodes which include 3 nodes with privacy
 enabled.
+Where the node details are as follows:
+|Name   | Pantheon Node address                      | Orion node key                               |
+| ----- | ------------------------------------------ | -------------------------------------------- |
+| node1 | 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 | A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo= |
+| node2 | 0x627306090abab3a6e1400e9345bc60c78a8bef57 | Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs= |
 
 ### Create and Deploy the Contract
 `./scripts/create_contract.sh` deploys the EventEmitter Smart Contract by
@@ -141,8 +146,8 @@ Sample Output:
 }
 ```
 
-### Acquire the Information About the Private Transaction
-`./get_value.sh` gets the information about the private transaction,
+### Getting the Transaction Receipt
+`./get_receipt.sh` gets the information about the private transaction,
 after the transaction was mined. Receipts for pending transactions the
 contract address are not available.
 
@@ -154,12 +159,12 @@ contract address are not available.
 
 
 ```bash tab="Example"
-./scripts/get_receipt.sh -txhash 0x94aa3be946fe44b9a09cfd2b5c8f898e508546e477aa20a9b12ef002357ef5ce -orionPubKey A1aVtMxLCUHmBVHXoZzzBgPbW/wj5axDpW9X8l91SGo= -httpEndpoint http://localhost:20000
+./scripts/get_receipt.sh -txhash <transactionHash> -orionPubKey <orionPublicKey> -httpEndpoint <nodeEndpoint>
 ```
 
 ### Stop Services and Network
-`./scripts/stop-private.sh` stops all the docker containers created.
+`./scripts/stop.sh` stops all the docker containers created.
 
 ### Stop Services and Network and Remove Docker Images
-`./scripts/remove-private.sh` stops all the services and deletes all the docker images.
+`./scripts/remove.sh` stops all the services and deletes all the docker images.
 
