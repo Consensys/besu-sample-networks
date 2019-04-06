@@ -1,2 +1,3 @@
 .idea/
 /pantheon-quickstart.iml
+*.lock
