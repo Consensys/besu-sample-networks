@@ -13,9 +13,7 @@
 
 . ./.env
 
-docker-compose down -v
-docker-compose rm -sfv
-rm -rf pantheon/data*/database
-rm -rf pantheon/data*/private*
-rm -rf pantheon/data*/uploads
-rm -rf pantheon/data*/pantheon.ports
+./remove.sh
+docker image rm quickstart/pantheon:$PANTHEON_VERSION-privacy
+docker image rm quickstart/orion:$ORION_VERSION
+docker image rm quickstart/block-explorer-light:$PANTHEON_VERSION

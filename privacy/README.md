@@ -165,8 +165,11 @@ contract address are not available.
 ```
 
 ### Stop Services and Network
-`./scripts/stop.sh` stops all the docker containers created.
+`./stop.sh` stops all the docker containers created.
 
-### Stop Services and Network and Remove Docker Images
-`./scripts/remove.sh` stops all the services and deletes all the docker images.
+### Remove stopped containers and volumes 
+`./remove.sh` stops and removes all the containers and volumes. 
+
+### Remove Docker Images
+`./delete.sh` stops the containers and deletes all the docker images.
 
