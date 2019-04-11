@@ -5,7 +5,7 @@ me=`basename "$0"`
 txHash=""
 orionPubKey=""
 httpEndpoint=""
-if [[ $# != 6 ]]
+if [ $# != 6 ]
 then
   echo "Unsupported flags, use -h|--help for complete usage"
   echo "Usage: ${me}"
@@ -15,7 +15,7 @@ then
   exit 0
 fi
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
   case "$1" in
     -h|--help)
       echo "Usage: ${me}"

@@ -18,24 +18,6 @@ To run this tutorial, you must have the following installed:
 - [Git command line](https://git-scm.com/)
 
 
-## Verification
-
-We need RLP-encoded signed transactions to perform
-`eea_sendRawTransaction`. Currently, we have hardcoded the 3
-transactions to verify the working of the private network. Its WIP to
-bring up a client to do the same.
-
-
-All the scripts are a part of the `scripts` folder and can be executed
-only once and in the order of: 
-- `create_contract.sh` 
-- `set_value.sh` 
-- `get_value.sh`
-
-The transaction receipts of the corresponding transaction can be viewed by executing `get_receipt.sh` with
-the correct parameters. 
-
-
 ## Execution Process to Create a Privacy enabled Network
 
 ### Build Docker Images and Start Services and Network
@@ -50,7 +32,46 @@ node1 | 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73 | A1aVtMxLCUHmBVHXoZzzBgPbW/w
 node2 | 0x627306090abab3a6e1400e9345bc60c78a8bef57 | Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs= | http://localhost:20002
 node3 | 0xf17f52151EbEF6C7334FAD080c5704D77216b732 | k2zXEin4Ip/qBGlRkJejnGWdP9cjkK+DAvKNW31L2C8= | http://localhost:20004
 
-### Create and Deploy the Contract
+
+### Using `eeajs` to deploy contracts
+#### Prerequisites
+ - [Nodejs](https://nodejs.org/en/download/)
+ 
+ Clone [eeajs](https://github.com/iikirilov/eeajs) github repo. 
+ 
+#### EventEmitter contract
+
+After starting the docker containers, execute `node example/eventEmitter.js` in the `eeajs` project.
+This deploys the `EventEmitter` contract, sets a value of `1000` and gets the value.
+
+It can be verified from the output of the last transaction - `0x00000000000000000000000000000000000000000000000000000000000003e8`
+which is the hex value of `1000`.
+
+#### ERC20 token
+
+Executing `node example/erc20.js` deploys a `HumanStandardToken` contract and transfers 1 token to node2.
+
+This can be verified from the `data` field of the `logs` which is `1`.
+
+### Using Hardcoded scripts
+
+We need RLP-encoded signed transactions to perform
+`eea_sendRawTransaction`. Currently, we have hardcoded the 3
+transactions to verify the working of the private network. 
+
+All the scripts are a part of the `scripts` folder:
+- `create_contract.sh` 
+- `set_value.sh` 
+- `get_value.sh`
+
+These scripts can be executed only once and in the given order for each time we start the containers. 
+The execute them again we need to `./stop.sh` and `./remove.sh` and restart the docker containers. 
+
+The transaction receipts of the corresponding transaction can be viewed by executing `get_receipt.sh` with
+the correct parameters as explained later. 
+
+
+#### Create and Deploy the Contract
 `./scripts/create_contract.sh` deploys the EventEmitter Smart Contract by
 calling eea_sendRawTransaction using as a parameter the given
 RLP-encoded signed transaction. We are creating the contract using credentials of `node1`.
@@ -69,7 +90,7 @@ Sample Output:
 ```
 
 
-### Change the Value in the Contract
+#### Change the Value in the Contract
 `./scripts/set_value.sh` sets value to the contract deployed. We are calling the `store` function 
 of the `EventEmitter` contract from `node2` and setting the value of 1000.
 
@@ -114,7 +135,7 @@ Sample Output:
 }
 ```
 
-### Acquire the Value
+#### Acquire the Value
 `./scripts/get_value.sh` gets value from the `EventEmitter` contract deployed which was
 set. This is also being called from `node2`. Once the transaction is successful, we can use the `transactionHash` 
 generated to get the transaction receipt which will have the stored value in the `output` field.
@@ -148,7 +169,7 @@ Sample Output:
 }
 ```
 
-### Getting the Transaction Receipt
+#### Getting the Transaction Receipt
 `./get_receipt.sh` gets the information about the private transaction,
 after the transaction was mined. Receipts for pending transactions the
 contract address are not available.
@@ -164,6 +185,15 @@ contract address are not available.
 ./scripts/get_receipt.sh -txhash <transactionHash> -orionPubKey <orionPublicKey> -httpEndpoint <nodeEndpoint>
 ```
 
+#### Troubleshooting
+
+##### `nonce too low`
+
+Since the scripts are hardcoded RLP transactions with fixed nonce, they can be executed only once. 
+And in the order of `create_contract.sh` `set_value.sh` `get_value.sh`. 
+
+To restart the docker containers afresh you need to `./stop.sh` and `./remove.sh` to clear all the DB and 
+start a new container. 
 ### Stop Services and Network
 `./stop.sh` stops all the docker containers created.
 

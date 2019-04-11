@@ -15,7 +15,6 @@
 
 docker-compose down -v
 docker-compose rm -sfv
-rm -rf pantheon/data*/database
-rm -rf pantheon/data*/private*
-rm -rf pantheon/data*/uploads
-rm -rf pantheon/data*/pantheon.ports
+rm -rf pantheon/data*/database/*
+rm -rf pantheon/data*/private*/*
+rm -rf pantheon/data*/uploads/*
