@@ -108,7 +108,7 @@ Sample Output:
 }
 ```
 
-`./scripts/get_receipt.sh --transactionHash 0xee7df3b27c3824c5f451997c43eaec3582f708e17290a182643ee320ac211d72 --orionPublicKey Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs= --httpNodeEndpoint http://localhost:20002`
+`./scripts/get_receipt.sh --transactionHash 0xee7df3b27c3824c5f451997c43eaec3582f708e17290a182643ee320ac211d72 --httpNodeEndpoint http://localhost:20002`
 
 Sample Output:
 ```bash
@@ -152,7 +152,7 @@ Sample Output:
 }
 ```
 
-`./scripts/get_receipt.sh --transactionHash 0xdeb0a738c9841894959256196757e3c8df08f069b34d92184a500468b4e37d29 --orionPublicKey Ko2bVqD+nNlNYL5EE7y3IdOnviftjiizpjRt+HTuFBs= --httpNodeEndpoint http://localhost:20002`
+`./scripts/get_receipt.sh --transactionHash 0xdeb0a738c9841894959256196757e3c8df08f069b34d92184a500468b4e37d29 --httpNodeEndpoint http://localhost:20002`
 
 Sample Output:
 ```bash
@@ -176,13 +176,11 @@ contract address are not available.
 
 **txHash :** *the transaction hash returned by executing a transaction.*
 
-**orionPubKey :** *the public key with which Orion was started.*
-
 **httpEndpoint :** *the HTTP service endpoint of node.*
 
 
 ```bash tab="Example"
-./scripts/get_receipt.sh -txhash <transactionHash> -orionPubKey <orionPublicKey> -httpEndpoint <nodeEndpoint>
+./scripts/get_receipt.sh -txhash <transactionHash> -httpEndpoint <nodeEndpoint>
 ```
 
 #### Troubleshooting

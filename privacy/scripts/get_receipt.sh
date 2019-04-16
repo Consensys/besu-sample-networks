@@ -5,12 +5,11 @@ me=`basename "$0"`
 txHash=""
 orionPubKey=""
 httpEndpoint=""
-if [ $# != 6 ]
+if [ $# != 4 ]
 then
   echo "Unsupported flags, use -h|--help for complete usage"
   echo "Usage: ${me}"
   echo "    -txHash|--transactionHash : the transaction hash returned by executing a transaction"
-  echo "    -orionPubKey|--orionPublicKey : the public key with which Orion was started"
   echo "    -httpEndpoint|--httpNodeEndpoint : the HTTP service endpoint of node"
   exit 0
 fi
@@ -20,16 +19,11 @@ while [ $# -gt 0 ]; do
     -h|--help)
       echo "Usage: ${me}"
       echo "    -txHash|--transactionHash : the transaction hash returned by executing a transaction"
-      echo "    -orionPubKey|--orionPublicKey : the public key with which Orion was started"
       echo "    -httpEndpoint|--httpNodeEndpoint : the HTTP service endpoint of node"
       exit 0
       ;;
     -txHash|--transactionHash)
       txHash="${2}"
-      shift 2
-      ;;
-    -orionPubKey|--orionPublicKey)
-      orionPubKey="${2}"
       shift 2
       ;;
     -httpEndpoint|--httpNodeEndpoint)
@@ -47,4 +41,4 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-curl -X POST --data '{"jsonrpc":"2.0","method":"eea_getTransactionReceipt","params":["'${txHash}'", "'${orionPubKey}'"],"id":1}' ${httpEndpoint}
+curl -X POST --data '{"jsonrpc":"2.0","method":"eea_getTransactionReceipt","params":["'${txHash}'"],"id":1}' ${httpEndpoint}
