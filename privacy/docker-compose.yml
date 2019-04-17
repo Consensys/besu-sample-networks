@@ -108,6 +108,7 @@ services:
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/orion/orion3:/etc/pantheon
+      - ${PWD}/pantheon/data3:/var/lib/pantheon
     depends_on:
       - bootnode
       - orion3
