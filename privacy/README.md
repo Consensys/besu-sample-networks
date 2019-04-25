@@ -37,6 +37,10 @@ node3 | 0xf17f52151EbEF6C7334FAD080c5704D77216b732 | k2zXEin4Ip/qBGlRkJejnGWdP9c
 #### Prerequisites
  - [Nodejs](https://nodejs.org/en/download/)
  
+ Install the following after downloading `Nodejs` - 
+ - [web3](https://www.npmjs.com/package/web3)
+ - [axios](https://www.npmjs.com/package/axios)
+  
  Clone [eeajs](https://github.com/iikirilov/eeajs) github repo. 
  
 #### EventEmitter contract

@@ -30,7 +30,7 @@ while [ $# -gt 0 ]; do
       shift
       break
       ;;
-    -*|--*=) # unsupported flags
+    -*|--*=|*) # unsupported flags
       echo "Error: Unsupported flag $1, try ${me} -h or ${me} --help for complete usage help." >&2
       exit 1
       ;;
