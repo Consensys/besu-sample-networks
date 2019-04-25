@@ -174,7 +174,7 @@ Sample Output:
 ```
 
 #### Getting the Transaction Receipt
-`./get_receipt.sh` gets the information about the private transaction,
+`./scripts/get_receipt.sh` gets the information about the private transaction,
 after the transaction was mined. Receipts for pending transactions the
 contract address are not available.
 
