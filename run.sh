@@ -40,6 +40,15 @@ displayUsage()
   exit 0
 }
 
+# options values and api values are not necessarily identical.
+# value to use for ibft2 option as required for Pantheon --rpc-http-api and --rpc-ws-api
+# we want to explicitely display IBFT2 in the quickstart options to prevent people from
+# being confused with previous version IBFT, however the RPC API remains commons, so the name
+# that's the reason of this not obvious mapping.
+# variables names must be similar to the option -c|--consensus values to map.
+ibft2='ibft'
+clique='clique' # value to use for clique option
+
 while [ $# -gt 0 ]; do
   case "$1" in
     -h|--help)
@@ -56,13 +65,6 @@ while [ $# -gt 0 ]; do
     -c|--consensus)
       case "${2}" in
         ibft2|clique)
-          # options values and api values are not necessarily identical.
-          # value to use for ibft2 option as required for Pantheon --rpc-http-api and --rpc-ws-api
-          # we want to explicitely display IBFT2 in the quickstart options to prevent people from
-          # being confused with previous version IBFT, however the RPC API remains commons, so the name
-          # that's the reason of this not obvious mapping.
-          ibft2=ibft
-          clique=clique # value to use for clique option
           export QUICKSTART_POA_NAME="${2}"
           export QUICKSTART_POA_API="${!2}"
           export QUICKSTART_VERSION="${PANTHEON_VERSION}-${QUICKSTART_POA_NAME}"
@@ -104,6 +106,6 @@ docker-compose ${composeFile} up -d --scale node=${scaleNode}
 #list services and endpoints
 ./list.sh
 #list individual nodes endpoints in case we run a PoA network
-if [[ "${QUICKSTART_POA_API}" == "${ibft2}" ]]; then
+if [[ "${QUICKSTART_POA_API:-}" == "${ibft2}" ]]; then
   ./inspect-ibft2.sh
 fi
