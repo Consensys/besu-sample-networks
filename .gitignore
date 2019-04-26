@@ -1,3 +1,9 @@
 .idea/
 /pantheon-quickstart.iml
 *.lock
+
+#ignore all the DB and temp files and folders created by pantheon
+/privacy/pantheon/data*/database
+/privacy/pantheon/data*/private*
+/privacy/pantheon/data*/uploads
+/privacy/pantheon/data*/pantheon.ports
