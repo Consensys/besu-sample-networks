@@ -28,13 +28,13 @@ services:
     build:
       context: orion
     image: quickstart/orion:${ORION_VERSION}
-    entrypoint: /orion/build/bin/orion ${ORION_DATA_FOLDER1}/orion.conf
+    entrypoint: /orion/bin/orion ${ORION_DATA_FOLDER1}/orion.conf
   orion2:
     image: quickstart/orion:${ORION_VERSION}
-    entrypoint: /orion/build/bin/orion ${ORION_DATA_FOLDER2}/orion.conf
+    entrypoint: /orion/bin/orion ${ORION_DATA_FOLDER2}/orion.conf
   orion3:
     image: quickstart/orion:${ORION_VERSION}
-    entrypoint: /orion/build/bin/orion ${ORION_DATA_FOLDER3}/orion.conf
+    entrypoint: /orion/bin/orion ${ORION_DATA_FOLDER3}/orion.conf
 
   node1:
     image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
