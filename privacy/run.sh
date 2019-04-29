@@ -46,6 +46,10 @@ mkdir -p pantheon/data2/privateState
 mkdir -p pantheon/data2/database
 mkdir -p pantheon/data2/private
 
+mkdir -p pantheon/data3/privateState
+mkdir -p pantheon/data3/database
+mkdir -p pantheon/data3/private
+
 # Build and run containers and network
 docker-compose build
 docker-compose up --force-recreate -d
