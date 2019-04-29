@@ -50,6 +50,9 @@ mkdir -p pantheon/data3/privateState
 mkdir -p pantheon/data3/database
 mkdir -p pantheon/data3/private
 
+# Pull latest Pantheon develop image as it's not done automatically
+docker pull pegasyseng/pantheon:develop
+
 # Build and run containers and network
 docker-compose build
 docker-compose up --force-recreate -d
