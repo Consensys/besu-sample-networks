@@ -10,8 +10,8 @@ COPY *_start.sh /opt/pantheon/
 COPY orion/* /orion/
 
 # Install a dos 2 unix EOL converter
-RUN apt-get -qq update && \
-    apt-get -qq -y install dos2unix
+RUN apk add --update dos2unix && \
+    rm -rf /var/cache/apk/*
 
 # Run dos2unix EOL conversion on all shell scripts to prevent scripts to fail if edited with a windows IDE
 # that rewrote the EOL to CRLF before we build the image. See issue #4
