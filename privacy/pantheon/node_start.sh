@@ -34,4 +34,4 @@ BOOTNODE_P2P_PORT="30303"
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:${BOOTNODE_P2P_PORT}"
 
 # run with bootnode param
-/opt/pantheon/bin/pantheon $@ --bootnodes=$bootnode_enode_address
+/opt/pantheon/bin/pantheon $@ --bootnodes=$bootnode_enode_address --min-gas-price=0
