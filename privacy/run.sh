@@ -51,7 +51,6 @@ mkdir -p pantheon/data3/database
 mkdir -p pantheon/data3/private
 
 # Build and run containers and network
-docker-compose build
-docker-compose up --force-recreate -d
+docker-compose up -d
 
 ./list.sh
