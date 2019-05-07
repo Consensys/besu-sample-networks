@@ -8,7 +8,7 @@ services:
     image: quickstart/pantheon:${PANTHEON_VERSION}-privacy
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
-    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev
+    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev --min-gas-price=0
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
 
@@ -18,7 +18,8 @@ services:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
               "--miner-enabled",
-              "--miner-coinbase=${MINER_COINBASE}"]
+              "--miner-coinbase=${MINER_COINBASE}",
+              "--min-gas-price=0"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
@@ -51,7 +52,8 @@ services:
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--rpc-http-api=EEA,WEB3,ETH,NET",
-              "--host-whitelist=*"]
+              "--host-whitelist=*",
+              "--min-gas-price=0"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/pantheon/data1:/var/lib/pantheon
@@ -78,7 +80,8 @@ services:
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--rpc-http-api=EEA,WEB3,ETH,NET",
-              "--host-whitelist=*"]
+              "--host-whitelist=*",
+              "--min-gas-price=0"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/pantheon/data2:/var/lib/pantheon
@@ -104,7 +107,8 @@ services:
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
               "--rpc-http-api=EEA,WEB3,ETH,NET",
-              "--host-whitelist=*"]
+              "--host-whitelist=*",
+              "--min-gas-price=0"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/orion/orion3:/etc/pantheon
@@ -126,7 +130,8 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
-              "--host-whitelist=*"]
+              "--host-whitelist=*",
+              "--min-gas-price=0"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
