@@ -44,6 +44,7 @@ services:
               "--graphql-http-enabled",
               "--graphql-http-host=0.0.0.0",
               "--graphql-http-port=8547",
+              "--graphql-http-cors-origins=*",
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
