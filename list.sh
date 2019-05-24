@@ -48,6 +48,7 @@ if [ ${#dots} -gt ${maxRetryCount} ]; then
 else
   echo "JSON-RPC HTTP service endpoint      : http://${HOST}:${explorerMapping##*:}/jsonrpc"
   echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws"
+  echo "GraphQL HTTP service endpoint       : http://${HOST}:${explorerMapping##*:}/graphql"
   echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}"
   echo "****************************************************************"
 fi

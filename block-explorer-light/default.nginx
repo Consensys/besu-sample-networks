@@ -22,6 +22,13 @@ server {
         proxy_set_header Connection "Upgrade";
     }
 
+    # a common HTTP GraphQL entrypoint
+    location /graphql {
+      proxy_pass http://rpcnode:8547;
+      proxy_redirect     off;
+      proxy_set_header   Host $host;
+    }
+
     # a generic HTTP RPC entrypoint pointing to each available node
     location ~* /(?<serviceName>(.*))/jsonrpc {
       # Use Docker default local network DNS IP as resolver
