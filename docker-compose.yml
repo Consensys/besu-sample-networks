@@ -50,6 +50,9 @@ services:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
+    ports:
+      - "8545:8545"
+      - "8546:8546"
   explorer:
     build: block-explorer-light/.
     image: "quickstart/block-explorer-light:${PANTHEON_VERSION}"
