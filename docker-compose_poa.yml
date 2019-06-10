@@ -1,5 +1,6 @@
 version: '2.2'
 services:
+
   bootnode:
     build:
       context: pantheon_${QUICKSTART_POA_NAME-ibft2}/.
@@ -23,10 +24,16 @@ services:
               "--graphql-http-host=0.0.0.0",
               "--graphql-http-port=8547",
               "--graphql-http-cors-origins=*",
+              "--metrics-push-enabled",
+              "--metrics-push-host=prometheus-gateway",
+              "--metrics-push-port=9091",
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
+    links:
+      - prometheus-gateway:prometheus-gateway
+
   node:
     image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA_NAME-ibft2}
     environment:
@@ -38,6 +45,10 @@ services:
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
     depends_on:
       - bootnode
+      - prometheus-gateway
+    links:
+      - prometheus-gateway:prometheus-gateway
+
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: quickstart/pantheon:${PANTHEON_VERSION}-${QUICKSTART_POA_NAME-ibft2}
     environment:
@@ -49,6 +60,10 @@ services:
       - genesis:${PANTHEON_GENESIS_FILE_DIRECTORY}
     depends_on:
       - bootnode
+      - prometheus-gateway
+    links:
+      - prometheus-gateway:prometheus-gateway
+
   explorer:
     build: block-explorer-light/.
     image: quickstart/block-explorer-light:${PANTHEON_VERSION}-${QUICKSTART_POA_NAME-ibft2}
@@ -56,6 +71,49 @@ services:
       - rpcnode
     ports:
       - "${EXPLORER_PORT_MAPPING:-}80"
+
+  prometheus-gateway:
+    image: "prom/pushgateway"
+    ports:
+      - 9091:9091
+    volumes:
+      - ./prometheus/prometheus-gateway.yml:/etc/prometheus/prometheus.yml
+      - prometheus-gateway:/pushgateway
+
+  prometheus:
+    image: "prom/prometheus"
+    links:
+      - prometheus-gateway:prometheus-gateway
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+
+  # grafana ui login = admin:secret
+  grafana:
+    image: "grafana/grafana"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    depends_on:
+      - prometheus
+    links:
+      - prometheus:prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+
+
+
 volumes:
   public-keys:
+
   genesis:
+
+  prometheus-gateway:
+
+  prometheus:
+
+  grafana:

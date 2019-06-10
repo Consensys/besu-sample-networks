@@ -7,3 +7,5 @@
 /privacy/pantheon/data*/private*
 /privacy/pantheon/data*/uploads
 /privacy/pantheon/data*/pantheon.ports
+
+./volumes/

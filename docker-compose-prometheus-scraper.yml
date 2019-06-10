@@ -11,7 +11,7 @@ services:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
-    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev --metrics-push-enabled --metrics-push-host=prometheus-gateway --metrics-push-port=9091
+    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
 
@@ -21,34 +21,24 @@ services:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
               "--miner-enabled",
-              "--metrics-push-enabled",
-              "--metrics-push-host=prometheus-gateway",
-              "--metrics-push-port=9091",
+              "--metrics-enabled",
+              "--metrics-host=0.0.0.0",
+              "--metrics-port=9545",
               "--miner-coinbase=${MINER_COINBASE}",
               "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
-      - prometheus-gateway
-    links:
-      - prometheus-gateway:prometheus-gateway
-
   node:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
-    command: ["--network=dev",
-              "--metrics-push-enabled",
-              "--metrics-push-host=prometheus-gateway",
-              "--metrics-push-port=9091"]
+    command: ["--network=dev"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
-      - prometheus-gateway
-    links:
-      - prometheus-gateway:prometheus-gateway
 
   rpcnode:
     image: quickstart/pantheon:${PANTHEON_VERSION}
@@ -60,9 +50,9 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
-              "--metrics-push-enabled",
-              "--metrics-push-host=prometheus-gateway",
-              "--metrics-push-port=9091",
+              "--metrics-enabled",
+              "--metrics-host=0.0.0.0",
+              "--metrics-port=9545",
               "--graphql-http-enabled",
               "--graphql-http-host=0.0.0.0",
               "--graphql-http-port=8547",
@@ -72,9 +62,6 @@ services:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
-      - prometheus-gateway
-    links:
-      - prometheus-gateway:prometheus-gateway
 
   explorer:
     build: block-explorer-light/.
@@ -84,46 +71,22 @@ services:
     ports:
       - "${EXPLORER_PORT_MAPPING:-}80"
 
-  prometheus-gateway:
-    image: "prom/pushgateway"
-    ports:
-      - 9091:9091
-    volumes:
-      - ./prometheus/prometheus-gateway.yml:/etc/prometheus/prometheus.yml
-      - prometheus-gateway:/pushgateway
-
   prometheus:
     image: "prom/prometheus"
+    depends_on:
+      - minernode
+      - rpcnode
     links:
-      - prometheus-gateway:prometheus-gateway
+      - minernode:minernode
+      - rpcnode:rpcnode
     ports:
       - 9090:9090
     volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus-gateway.yml:/etc/prometheus/prometheus-gateway.yml
       - prometheus:/prometheus
-
-  # grafana ui login = admin:secret
-  grafana:
-    image: "grafana/grafana"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=secret
-    depends_on:
-      - prometheus
-    links:
-      - prometheus:prometheus
-    ports:
-      - 3000:3000
-    volumes:
-      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
-      - grafana:/var/lib/grafana
 
 
 volumes:
   public-keys:
 
-  prometheus-gateway:
-
   prometheus:
-
-  grafana:
-
