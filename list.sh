@@ -50,7 +50,7 @@ else
   echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:${explorerMapping##*:}/jsonws"
   echo "GraphQL HTTP service endpoint       : http://${HOST}:${explorerMapping##*:}/graphql"
   echo "Web block explorer address          : http://${HOST}:${explorerMapping##*:}"
-  echo "Prometheus address                  : http://${HOST}:9090"
-  echo "Grafana address                     : http://${HOST}:3000"
+  echo "Prometheus address                  : http://${HOST}:${explorerMapping##*:}/prometheus/graph"
+  echo "Grafana address                     : http://${HOST}:${explorerMapping##*:}/grafana-dashboard"
   echo "****************************************************************"
 fi
