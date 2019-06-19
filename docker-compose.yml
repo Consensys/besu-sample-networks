@@ -1,5 +1,7 @@
-version: '2.2'
+---
+version: '3.4'
 services:
+
   bootnode:
     build:
       context: pantheon/.
@@ -8,29 +10,40 @@ services:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
-    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev
+    entrypoint: /opt/pantheon/bootnode_start.sh --network=dev --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545 --host-whitelist=*
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
+
   minernode:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
     command: ["--network=dev",
               "--miner-enabled",
-              "--miner-coinbase=${MINER_COINBASE}"]
+              "--metrics-enabled",
+              "--metrics-host=0.0.0.0",
+              "--metrics-port=9545",
+              "--miner-coinbase=${MINER_COINBASE}",
+              "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
+
   node:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     environment:
       - PANTHEON_PUBLIC_KEY_DIRECTORY=${PANTHEON_PUBLIC_KEY_DIRECTORY}
-    command: ["--network=dev"]
+    command: ["--network=dev",
+              "--metrics-enabled",
+              "--metrics-host=0.0.0.0",
+              "--metrics-port=9545",
+              "--host-whitelist=*"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
+
   rpcnode:
     image: quickstart/pantheon:${PANTHEON_VERSION}
     command: ["--network=dev",
@@ -41,6 +54,9 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
+              "--metrics-enabled",
+              "--metrics-host=0.0.0.0",
+              "--metrics-port=9545",
               "--graphql-http-enabled",
               "--graphql-http-host=0.0.0.0",
               "--graphql-http-port=8547",
@@ -50,6 +66,7 @@ services:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
     depends_on:
       - bootnode
+
   explorer:
     build: block-explorer-light/.
     image: "quickstart/block-explorer-light:${PANTHEON_VERSION}"
@@ -57,5 +74,31 @@ services:
       - rpcnode
     ports:
       - "${EXPLORER_PORT_MAPPING:-}80"
+
+  prometheus:
+    image: "prom/prometheus"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.external-url=http://localhost:9090/prometheus
+      - --web.route-prefix=/prometheus
+
+  grafana:
+    image: "grafana/grafana"
+    environment:
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+
+
 volumes:
   public-keys:
+
+  prometheus:
+
+  grafana:
+
