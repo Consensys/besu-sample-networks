@@ -137,8 +137,10 @@ services:
     depends_on:
       - bootnode
   explorer:
-    build: ../block-explorer-light
-    image: "quickstart/block-explorer-light:${PANTHEON_VERSION}"
+    build:
+      context: ../block-explorer-light
+      dockerfile: Dockerfile-privacy
+    image: quickstart/block-explorer-light:${PANTHEON_VERSION}-privacy
     depends_on:
       - rpcnode
     ports:

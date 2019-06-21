@@ -9,3 +9,4 @@
 /privacy/pantheon/data*/pantheon.ports
 
 ./volumes/
+.DS_Store
