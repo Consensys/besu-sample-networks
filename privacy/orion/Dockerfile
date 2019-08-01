@@ -1,5 +1,5 @@
 
-FROM openjdk:8-jdk as builder
+FROM openjdk:11-jdk as builder
 
 RUN apt-get -qq update && \
     apt-get -qq -y install git && \
@@ -17,7 +17,7 @@ RUN tar -xvzf orion* && \
     rm orion*.tar.gz && \
     mv orion* build
 
-FROM openjdk:8-jre
+FROM openjdk:11-jre
 
 RUN apt-get -qq update && \
     apt-get -qq -y install libsodium-dev

@@ -51,9 +51,10 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
-              "--rpc-http-api=EEA,WEB3,ETH,NET",
+              "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
               "--host-whitelist=*",
-              "--min-gas-price=0"]
+              "--min-gas-price=0",
+              "--privacy-public-key-file=/etc/pantheon/privacy_public_key"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/pantheon/data1:/var/lib/pantheon
@@ -79,9 +80,10 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
-              "--rpc-http-api=EEA,WEB3,ETH,NET",
+              "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
               "--host-whitelist=*",
-              "--min-gas-price=0"]
+              "--min-gas-price=0",
+              "--privacy-public-key-file=/etc/pantheon/privacy_public_key"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/pantheon/data2:/var/lib/pantheon
@@ -106,9 +108,10 @@ services:
               "--rpc-ws-enabled",
               "--rpc-ws-host=0.0.0.0",
               "--rpc-ws-port=8546",
-              "--rpc-http-api=EEA,WEB3,ETH,NET",
+              "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
               "--host-whitelist=*",
-              "--min-gas-price=0"]
+              "--min-gas-price=0",
+              "--privacy-public-key-file=/etc/pantheon/privacy_public_key"]
     volumes:
       - public-keys:${PANTHEON_PUBLIC_KEY_DIRECTORY}
       - ${PWD}/orion/orion3:/etc/pantheon
