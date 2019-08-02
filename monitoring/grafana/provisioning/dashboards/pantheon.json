@@ -307,7 +307,7 @@
       ],
       "targets": [
         {
-          "expr": "sum by (instance) (pantheon_blockchain_height{instance=~\"$system\"})",
+          "expr": "sum by (instance) (ethereum_blockchain_height{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -316,14 +316,14 @@
           "refId": "A"
         },
         {
-          "expr": "sum by (instance) (pantheon_synchronizer_best_known_block{instance=~\"$system\"})",
+          "expr": "sum by (instance) (ethereum_best_known_block_number{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
           "refId": "F"
         },
         {
-          "expr": "sum by (instance) (pantheon_synchronizer_best_known_block{instance=~\"$system\"} - pantheon_blockchain_height{instance=~\"$system\"})",
+          "expr": "sum by (instance) (ethereum_best_known_block_number{instance=~\"$system\"} - ethereum_blockchain_height{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -338,7 +338,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum by (instance) (1/rate(pantheon_blockchain_height{instance=~\"$system\"}[5m]))",
+          "expr": "sum by (instance) (1/rate(ethereum_blockchain_height{instance=~\"$system\"}[5m]))",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -352,7 +352,7 @@
           "refId": "E"
         },
         {
-          "expr": "sum by (instance) (pantheon_peers_peer_count_current{instance=~\"$system\"})",
+          "expr": "sum by (instance) (ethereum_peer_count{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -360,7 +360,7 @@
           "refId": "C"
         },
         {
-          "expr": "sum by (instance) (pantheon_peers_peer_count_current{instance=~\"$system\"} / pantheon_network_peers_limit{instance=~\"$system\"})",
+          "expr": "sum by (instance) (ethereum_peer_count{instance=~\"$system\"} / ethereum_peer_limit{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -410,7 +410,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "1/rate(pantheon_blockchain_height{instance=~\"$system\"}[5m])",
+          "expr": "1/rate(ethereum_blockchain_height{instance=~\"$system\"}[5m])",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -504,7 +504,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "pantheon_synchronizer_best_known_block{instance=~\"$system\"} - pantheon_blockchain_height{instance=~\"$system\"}",
+          "expr": "ethereum_best_known_block_number{instance=~\"$system\"} - ethereum_blockchain_height{instance=~\"$system\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -828,14 +828,14 @@
         "allValue": null,
         "current": {},
         "datasource": "Prometheus",
-        "definition": "pantheon_blockchain_height",
+        "definition": "ethereum_blockchain_height",
         "hide": 0,
         "includeAll": true,
         "label": "System",
         "multi": true,
         "name": "system",
         "options": [],
-        "query": "pantheon_blockchain_height",
+        "query": "ethereum_blockchain_height",
         "refresh": 2,
         "regex": "/instance=\"([^\"]*)\"/",
         "skipUrlSync": false,
