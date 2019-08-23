@@ -73,7 +73,7 @@ services:
     depends_on:
       - rpcnode
     ports:
-      - "${EXPLORER_PORT_MAPPING:-}80"
+      - "${EXPLORER_PORT_MAPPING:-0}:80"
 
   prometheus:
     image: "prom/prometheus"
