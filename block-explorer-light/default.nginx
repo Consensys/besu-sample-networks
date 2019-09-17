@@ -29,10 +29,10 @@ server {
       proxy_set_header   Host $host;
     }
 
-    # a common HTTP grafana endpoint with the pantheon dashboard
+    # a common HTTP grafana endpoint with the besu dashboard
     # this is a shortcut to the full url location below
     location /grafana-dashboard {
-       return 301 /grafana/d/XE4V0WGZz/pantheon-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All;
+       return 301 /grafana/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All;
        absolute_redirect off;
        port_in_redirect off;
        proxy_set_header Host $http_host;

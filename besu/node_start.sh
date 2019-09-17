@@ -14,9 +14,9 @@
 # write pub key for checking that network works
 node_id=`hostname`
 
-PUBLIC_KEYS_DIR=${PANTHEON_PUBLIC_KEY_DIRECTORY:=/opt/pantheon/public-keys/}
+PUBLIC_KEYS_DIR=${BESU_PUBLIC_KEY_DIRECTORY:=/opt/besu/public-keys/}
 
-/opt/pantheon/bin/pantheon $@ public-key export --to="${PUBLIC_KEYS_DIR}${node_id}"
+/opt/besu/bin/besu $@ public-key export --to="${PUBLIC_KEYS_DIR}${node_id}"
 
 BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode"
 
@@ -34,4 +34,4 @@ BOOTNODE_P2P_PORT="30303"
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:${BOOTNODE_P2P_PORT}"
 
 # run with bootnode param
-/opt/pantheon/bin/pantheon $@ --bootnodes=$bootnode_enode_address
+/opt/besu/bin/besu $@ --bootnodes=$bootnode_enode_address

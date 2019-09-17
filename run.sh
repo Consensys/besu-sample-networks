@@ -25,9 +25,9 @@ PARAMS=""
 displayUsage()
 {
   echo "${bold}*************************"
-  echo "Pantheon Quickstart usage"
+  echo "Besu Quickstart usage"
   echo "*************************${normal}"
-  echo "This script creates and start a local private Pantheon network using Docker."
+  echo "This script creates and start a local private Besu network using Docker."
   echo "You can scale the number of nodes and select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
   echo "    -p or --explorer-port <NUMBER>          : the port number you want to use for the endpoint
@@ -41,7 +41,7 @@ displayUsage()
 }
 
 # options values and api values are not necessarily identical.
-# value to use for ibft2 option as required for Pantheon --rpc-http-api and --rpc-ws-api
+# value to use for ibft2 option as required for Besu --rpc-http-api and --rpc-ws-api
 # we want to explicitely display IBFT2 in the quickstart options to prevent people from
 # being confused with previous version IBFT, however the RPC API remains commons, so the name
 # that's the reason of this not obvious mapping.
@@ -67,7 +67,7 @@ while [ $# -gt 0 ]; do
         ibft2|clique)
           export QUICKSTART_POA_NAME="${2}"
           export QUICKSTART_POA_API="${!2}"
-          export QUICKSTART_VERSION="${PANTHEON_VERSION}-${QUICKSTART_POA_NAME}"
+          export QUICKSTART_VERSION="${BESU_VERSION}-${QUICKSTART_POA_NAME}"
           composeFile="-f docker-compose_poa.yml"
           ;;
         ethash)
@@ -95,7 +95,7 @@ echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
 echo "scale:${scaleNode}" >> ${LOCK_FILE}
 
 echo "${bold}*************************************"
-echo "Pantheon Quickstart ${QUICKSTART_VERSION}"
+echo "Besu Quickstart ${QUICKSTART_VERSION}"
 echo "*************************************${normal}"
 echo "Start network"
 echo "--------------------"

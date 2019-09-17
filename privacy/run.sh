@@ -38,17 +38,17 @@ while [ $# -gt 0 ]; do
 done
 
 # hack such that the DB files(created by docker) can be deleted without sudo
-mkdir -p pantheon/data1/privateState
-mkdir -p pantheon/data1/database
-mkdir -p pantheon/data1/private
+mkdir -p besu/data1/privateState
+mkdir -p besu/data1/database
+mkdir -p besu/data1/private
 
-mkdir -p pantheon/data2/privateState
-mkdir -p pantheon/data2/database
-mkdir -p pantheon/data2/private
+mkdir -p besu/data2/privateState
+mkdir -p besu/data2/database
+mkdir -p besu/data2/private
 
-mkdir -p pantheon/data3/privateState
-mkdir -p pantheon/data3/database
-mkdir -p pantheon/data3/private
+mkdir -p besu/data3/privateState
+mkdir -p besu/data3/database
+mkdir -p besu/data3/private
 
 # Build and run containers and network
 docker-compose up -d

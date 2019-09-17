@@ -176,7 +176,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "https://raw.githubusercontent.com/PegaSysEng/pantheon-quickstart/master/azure/install_and_run.sh"
+            "https://raw.githubusercontent.com/PegaSysEng/besu-quickstart/master/azure/install_and_run.sh"
           ],
           "commandToExecute": "[concat('sh install_and_run.sh ', parameters('adminUsername'))]"
         }

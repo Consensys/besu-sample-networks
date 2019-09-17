@@ -1,12 +1,12 @@
 .idea/
-/pantheon-quickstart.iml
+*.iml
 *.lock
 
-#ignore all the DB and temp files and folders created by pantheon
-/privacy/pantheon/data*/database
-/privacy/pantheon/data*/private*
-/privacy/pantheon/data*/uploads
-/privacy/pantheon/data*/pantheon.ports
+#ignore all the DB and temp files and folders created by besu
+/privacy/besu/data*/database
+/privacy/besu/data*/private*
+/privacy/besu/data*/uploads
+/privacy/besu/data*/besu.ports
 
-./volumes/
+/volumes/
 .DS_Store
