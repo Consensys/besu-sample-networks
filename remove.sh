@@ -46,7 +46,7 @@ while [ $# -gt 0 ]; do
 done
 
 echo "${bold}*************************************"
-echo "Pantheon Quickstart ${version}"
+echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
 echo "Stop and remove network"
 echo "----------------------------------"
@@ -55,7 +55,7 @@ docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
 
 if [ "${keepImages}" = "false" ];then
-  docker image rm quickstart/pantheon:${version}
+  docker image rm quickstart/besu:${version}
   docker image rm quickstart/block-explorer-light:${version}
 fi
 

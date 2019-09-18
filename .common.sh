@@ -49,3 +49,5 @@ else
     exit 1
   fi
 fi
+
+current_dir=${PWD##*/}

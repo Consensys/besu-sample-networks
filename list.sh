@@ -21,7 +21,7 @@ HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays links to exposed services
 echo "${bold}*************************************"
-echo "Pantheon Quickstart ${version}"
+echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
 echo "List endpoints and services"
 echo "----------------------------------"

@@ -17,7 +17,7 @@ NO_LOCK_REQUIRED=false
 . ./.common.sh
 
 echo "${bold}*************************************"
-echo "Pantheon Quickstart ${version}"
+echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
 echo "Stop network"
 echo "----------------------------------"

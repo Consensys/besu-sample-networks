@@ -23,7 +23,7 @@ if [[ ${version} != *"ibft"* ]]; then
 fi
 
 echo "${bold}*************************************"
-echo "Pantheon Quickstart ${version}"
+echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
 echo "List IBFT 2 nodes information"
 echo "----------------------------------"
@@ -38,7 +38,7 @@ containerCount=`grep -c "" <<< "${containerIds}"`
 # retrieve list of node addresses
 addressFilesWaitCommand="counter=0; while [ \$(ls -1 /tmp/keys/*_address 2>/dev/null | wc -l 2>/dev/null) -lt ${containerCount} ] && [ \"\$counter\" -lt \"30\" ];do sleep 1; printf '.' >&2; let \"counter++\"; done;"
 addressRetrievalCommand="grep \"0x\" /tmp/keys/*_address 2>/dev/null"
-addressList=`docker run --rm -v pantheon-quickstart_public-keys:/tmp/keys alpine /bin/sh -c "${addressFilesWaitCommand} ${addressRetrievalCommand}"`
+addressList=`docker run --rm -v ${current_dir}_public-keys:/tmp/keys alpine:3.4 /bin/sh -c "${addressFilesWaitCommand} ${addressRetrievalCommand}"`
 
 if [ -z "${addressList}" ]; then
   echo "Nodes addresses not yet available, please try again later."

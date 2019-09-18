@@ -48,7 +48,7 @@
       }
     ]
   },
-  "description": "Provides an overview of Pantheon nodes",
+  "description": "Provides an overview of Besu nodes",
   "editable": true,
   "gnetId": 10273,
   "graphTooltip": 0,
@@ -330,7 +330,7 @@
           "refId": "G"
         },
         {
-          "expr": "sum by (instance) (pantheon_blockchain_difficulty_total{instance=~\"$system\"})",
+          "expr": "sum by (instance) (besu_blockchain_difficulty_total{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -345,7 +345,7 @@
           "refId": "D"
         },
         {
-          "expr": "sum by (instance) (time() - pantheon_blockchain_chain_head_timestamp{instance=~\"$system\"})",
+          "expr": "sum by (instance) (time() - besu_blockchain_chain_head_timestamp{instance=~\"$system\"})",
           "format": "table",
           "instant": true,
           "intervalFactor": 1,
@@ -819,7 +819,7 @@
   "schemaVersion": 18,
   "style": "dark",
   "tags": [
-    "pantheon",
+    "besu",
     "ethereum"
   ],
   "templating": {
@@ -878,7 +878,7 @@
     ]
   },
   "timezone": "",
-  "title": "Pantheon Overview",
+  "title": "Besu Overview",
   "uid": "XE4V0WGZz",
   "version": 1
 }

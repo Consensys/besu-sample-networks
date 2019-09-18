@@ -14,6 +14,6 @@
 . ./.env
 
 ./remove.sh
-docker image rm quickstart/pantheon:$PANTHEON_VERSION-privacy
+docker image rm quickstart/besu:$BESU_VERSION-privacy
 docker image rm quickstart/orion:$ORION_VERSION
-docker image rm quickstart/block-explorer-light:$PANTHEON_VERSION
+docker image rm quickstart/block-explorer-light:$BESU_VERSION

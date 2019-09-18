@@ -14,18 +14,18 @@
 # write pub key for checking that network works
 node_id=`hostname`
 
-PUBLIC_KEYS_DIR=${PANTHEON_PUBLIC_KEY_DIRECTORY:=/opt/pantheon/public-keys/}
-GENESIS_FILE_DIR=${PANTHEON_GENESIS_FILE_DIRECTORY:=/opt/pantheon/genesis/}
-DATA_DIR=${PANTHEON_DATA_DIR:=/var/lib/pantheon/}
+PUBLIC_KEYS_DIR=${BESU_PUBLIC_KEY_DIRECTORY:=/opt/besu/public-keys/}
+GENESIS_FILE_DIR=${BESU_GENESIS_FILE_DIRECTORY:=/opt/besu/genesis/}
+DATA_DIR=${BESU_DATA_DIR:=/var/lib/besu/}
 GENESIS_FILE=${GENESIS_FILE_DIR}genesis.json
 
-PANTHEON_BINARY="/opt/pantheon/bin/pantheon $@ --data-path=${DATA_DIR}"
+BESU_BINARY="/opt/besu/bin/besu $@ --data-path=${DATA_DIR}"
 
 PUBLIC_FILES_PATH_PREFIX=${PUBLIC_KEYS_DIR}${node_id}
-${PANTHEON_BINARY} public-key export --to="${PUBLIC_FILES_PATH_PREFIX}_pubkey"
+${BESU_BINARY} public-key export --to="${PUBLIC_FILES_PATH_PREFIX}_pubkey"
 
 # export address to be able to add this node as a validator
-raw_address=`${PANTHEON_BINARY} public-key export-address --to="${PUBLIC_FILES_PATH_PREFIX}_address"`
+raw_address=`${BESU_BINARY} public-key export-address --to="${PUBLIC_FILES_PATH_PREFIX}_address"`
 
 # remove database as exporting public keys init the db but we don't have the right genesis yet
 rm -Rf ${DATA_DIR}/database
@@ -54,4 +54,4 @@ BOOTNODE_P2P_PORT="30303"
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:${BOOTNODE_P2P_PORT}"
 
 # run with bootnode param
-${PANTHEON_BINARY} --bootnodes=$bootnode_enode_address --genesis-file="${GENESIS_FILE}"
+${BESU_BINARY} --bootnodes=$bootnode_enode_address --genesis-file="${GENESIS_FILE}"
