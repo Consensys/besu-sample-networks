@@ -1,4 +1,4 @@
-#!/bin/sh -eu
+#!/bin/bash -eu
 
 # Copyright 2018 ConsenSys AG.
 #
