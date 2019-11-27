@@ -8,5 +8,6 @@
 /privacy/besu/data*/uploads
 /privacy/besu/data*/besu.ports
 logs/besu/*
+logs/orion/*
 /volumes/
 .DS_Store

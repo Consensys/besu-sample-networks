@@ -14,14 +14,11 @@ services:
     entrypoint: /opt/besu/bootnode_start.sh --network=dev --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545 --host-whitelist=*
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./besu_config:/config
+      - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+    ports:
+      - 30303:30303/tcp
+      - 30303:30303/udp
 
   minernode:
     image: quickstart/besu:${BESU_VERSION}
@@ -37,16 +34,10 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./besu_config:/config
+      - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
     depends_on:
       - bootnode
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   node:
     image: quickstart/besu:${BESU_VERSION}
@@ -60,16 +51,10 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./besu_config:/config
+      - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
     depends_on:
       - bootnode
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   rpcnode:
     image: quickstart/besu:${BESU_VERSION}
@@ -94,16 +79,12 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./besu_config:/config
+      - ./config/besu/log-config.xml:/config/log-config.xml
       - ./logs/besu:/var/log/
     depends_on:
       - bootnode
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+    ports:
+      - 8545:8545/tcp
 
   explorer:
     build: block-explorer-light/.
@@ -120,17 +101,18 @@ services:
       - prometheus:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --web.external-url=http://localhost:9090/prometheus
-      - --web.route-prefix=/prometheus
+    ports:
+      - 9090:9090/tcp
 
   grafana:
     image: "grafana/grafana"
     environment:
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana
       - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:
       - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
       - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
 
   redis:
     image: redis:alpine
@@ -149,10 +131,6 @@ services:
       nofile:
         soft: 65536
         hard: 65536
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
     cap_add:
       - IPC_LOCK
 
@@ -163,11 +141,12 @@ services:
       XPACK_MONITORING_ENABLED: "true"
       XPACK_MONITORING_COLLECTION_ENABLED: "true"
       SERVER_NAME: "localhost"
-      SERVER_BASEPATH: "/kibana"
     depends_on:
       - elasticsearch
     links:
       - elasticsearch
+    ports:
+      - 5601:5601/tcp
 
   logstash:
     build: ./logstash
@@ -202,4 +181,3 @@ volumes:
   prometheus:
 
   grafana:
-

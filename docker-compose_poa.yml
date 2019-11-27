@@ -4,56 +4,84 @@ services:
 
   bootnode:
     build:
-      context: besu_${QUICKSTART_POA_NAME-ibft2}/.
+      context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
     image: quickstart/besu:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - BESU_GENESIS_FILE_DIRECTORY=${BESU_GENESIS_FILE_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh
-    command: &base_options ["--rpc-http-enabled",
-              "--rpc-http-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-http-host=0.0.0.0",
-              "--rpc-http-port=8545",
-              "--rpc-http-cors-origins=*",
-              "--rpc-ws-enabled",
-              "--rpc-ws-api=WEB3,ETH,NET,${QUICKSTART_POA_API-ibft}",
-              "--rpc-ws-host=0.0.0.0",
-              "--rpc-ws-port=8546",
-              "--graphql-http-enabled",
-              "--graphql-http-host=0.0.0.0",
-              "--graphql-http-port=8547",
-              "--graphql-http-cors-origins=*",
-              "--metrics-enabled",
-              "--metrics-host=0.0.0.0",
-              "--metrics-port=9545",
-              "--host-whitelist=*"]
+    command: &base_options [
+      "--data-path=/opt/besu/data",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--rpc-http-enabled",
+      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+      "--rpc-http-host=0.0.0.0",
+      "--rpc-http-port=8545",
+      "--rpc-http-cors-origins=*",
+      "--rpc-ws-enabled",
+      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+      "--rpc-ws-host=0.0.0.0",
+      "--rpc-ws-port=8546",
+      "--graphql-http-enabled",
+      "--graphql-http-host=0.0.0.0",
+      "--graphql-http-port=8547",
+      "--graphql-http-cors-origins=*",
+      "--metrics-enabled",
+      "--metrics-host=0.0.0.0",
+      "--metrics-port=9545",
+      "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - genesis:${BESU_GENESIS_FILE_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
 
-  node:
-    image: quickstart/besu:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - BESU_GENESIS_FILE_DIRECTORY=${BESU_GENESIS_FILE_DIRECTORY}
-    command: *base_options
-    volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - genesis:${BESU_GENESIS_FILE_DIRECTORY}
-    depends_on:
-      - bootnode
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: quickstart/besu:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - BESU_GENESIS_FILE_DIRECTORY=${BESU_GENESIS_FILE_DIRECTORY}
     command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - genesis:${BESU_GENESIS_FILE_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
+    depends_on:
+      - bootnode
+    ports:
+      - 8545:8545/tcp
+
+  node1:
+    image: quickstart/besu:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
+    depends_on:
+      - bootnode
+
+  node2:
+    image: quickstart/besu:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
 
@@ -72,22 +100,82 @@ services:
       - prometheus:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --web.external-url=http://localhost:9090/prometheus
-      - --web.route-prefix=/prometheus
+    ports:
+      - 9090:9090/tcp
 
   grafana:
     image: "grafana/grafana"
     environment:
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana
       - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:
       - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
       - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
+
+  redis:
+    image: redis:alpine
+
+  elasticsearch:
+    build: ./elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      XPACK_MONITORING_ENABLED: "true"
+      XPACK_MONITORING_COLLECTION_ENABLED: "true"
+      SERVER_NAME: "localhost"
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601/tcp
+
+  logstash:
+    build: ./logstash
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+
+  filebeat:
+    build: ./filebeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
+    volumes:
+      - ./logs/besu/:/var/log/besu/
 
 volumes:
   public-keys:
-
-  genesis:
 
   prometheus:
 

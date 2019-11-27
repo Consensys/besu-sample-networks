@@ -25,24 +25,22 @@ filebeat.inputs:
       env_name: ${ENV_NAME}
       ip_address: ${IP_ADDRESS}
 
+  - paths:
+      - "/var/log/orion/*.log"
+    type: log
+    enabled: true
+    document_type: orion
+    fields_under_root: true
+    fields:
+      service_name: orion
+      env_name: ${ENV_NAME}
+      ip_address: ${IP_ADDRESS}
+
 output.redis:
   enabled: true
   hosts: ["${REDIS_HOST}:${REDIS_PORT}"]
   key: filebeat
-  #db: 0
-  #datatype: list
-  #loadbalance: true
-  # The Redis connection timeout in seconds. The default is 5 seconds.
-  #timeout: 5s
-  #max_retries: 3
-  #backoff.init: 1s
-  #backoff.max: 60s
-  #bulk_max_size: 2048
-  #codec.json:
-    # Pretty print json event
-    #pretty: false
-    # Configure escaping HTML symbols in strings.
-    #escape_html: false
+
 
 logging:
   level: error
