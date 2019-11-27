@@ -49,6 +49,11 @@ server {
       proxy_pass http://prometheus:9090/prometheus/;
     }
 
+    # a common HTTP grafana entrypoint
+    location /kibana/ {
+      proxy_pass http://kibana:5601/;
+    }
+
     # a generic HTTP RPC entrypoint pointing to each available node
     location ~* /(?<serviceName>(.*))/jsonrpc {
       # Use Docker default local network DNS IP as resolver

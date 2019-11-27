@@ -10,14 +10,24 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh --network=dev --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545 --host-whitelist=*
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./besu_config:/config
+      - ./logs/besu:/var/log/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   minernode:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--miner-enabled",
               "--metrics-enabled",
@@ -27,13 +37,22 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./besu_config:/config
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   node:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--metrics-enabled",
               "--metrics-host=0.0.0.0",
@@ -41,11 +60,22 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./besu_config:/config
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   rpcnode:
     image: quickstart/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",
@@ -64,8 +94,16 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./besu_config:/config
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8545/liveness"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   explorer:
     build: block-explorer-light/.
@@ -94,6 +132,69 @@ services:
       - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
       - grafana:/var/lib/grafana
 
+  redis:
+    image: redis:alpine
+
+  elasticsearch:
+    build: ./elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    cap_add:
+      - IPC_LOCK
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      XPACK_MONITORING_ENABLED: "true"
+      XPACK_MONITORING_COLLECTION_ENABLED: "true"
+      SERVER_NAME: "localhost"
+      SERVER_BASEPATH: "/kibana"
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+
+  logstash:
+    build: ./logstash
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+
+  filebeat:
+    build: ./filebeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
+    volumes:
+      - ./logs/besu/:/var/log/besu/
 
 volumes:
   public-keys:
