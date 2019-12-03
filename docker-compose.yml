@@ -10,14 +10,21 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh --network=dev --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545 --host-whitelist=*
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
+    ports:
+      - 30303:30303/tcp
+      - 30303:30303/udp
 
   minernode:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--miner-enabled",
               "--metrics-enabled",
@@ -27,6 +34,8 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
 
@@ -34,6 +43,7 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--metrics-enabled",
               "--metrics-host=0.0.0.0",
@@ -41,11 +51,16 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
 
   rpcnode:
     image: quickstart/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["--network=dev",
               "--rpc-http-enabled",
               "--rpc-http-host=0.0.0.0",
@@ -64,8 +79,12 @@ services:
               "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
+    ports:
+      - 8545:8545/tcp
 
   explorer:
     build: block-explorer-light/.
@@ -82,18 +101,79 @@ services:
       - prometheus:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --web.external-url=http://localhost:9090/prometheus
-      - --web.route-prefix=/prometheus
+    ports:
+      - 9090:9090/tcp
 
   grafana:
     image: "grafana/grafana"
     environment:
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana
       - GF_AUTH_ANONYMOUS_ENABLED=true
     volumes:
       - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
       - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
 
+  redis:
+    image: redis:alpine
+
+  elasticsearch:
+    build: ./elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "http.host=0.0.0.0"
+      - "transport.host=127.0.0.1"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.4.2
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      XPACK_MONITORING_ENABLED: "true"
+      XPACK_MONITORING_COLLECTION_ENABLED: "true"
+      SERVER_NAME: "localhost"
+    depends_on:
+      - elasticsearch
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601/tcp
+
+  logstash:
+    build: ./logstash
+    environment:
+      - ES_HOST=http://elasticsearch:9200
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - elasticsearch
+    links:
+      - redis
+      - elasticsearch
+
+  filebeat:
+    build: ./filebeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
+    volumes:
+      - ./logs/besu/:/var/log/besu/
 
 volumes:
   public-keys:
@@ -101,4 +181,3 @@ volumes:
   prometheus:
 
   grafana:
-

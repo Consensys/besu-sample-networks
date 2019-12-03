@@ -29,26 +29,6 @@ server {
       proxy_set_header   Host $host;
     }
 
-    # a common HTTP grafana endpoint with the besu dashboard
-    # this is a shortcut to the full url location below
-    location /grafana-dashboard {
-       return 301 /grafana/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All;
-       absolute_redirect off;
-       port_in_redirect off;
-       proxy_set_header Host $http_host;
-       proxy_pass http://grafana:3000/;
-    }
-
-    # a common HTTP grafana entrypoint
-    location /grafana/ {
-      proxy_pass http://grafana:3000/;
-    }
-
-    # a common HTTP prometheus entrypoint
-    location /prometheus/ {
-      proxy_pass http://prometheus:9090/prometheus/;
-    }
-
     # a generic HTTP RPC entrypoint pointing to each available node
     location ~* /(?<serviceName>(.*))/jsonrpc {
       # Use Docker default local network DNS IP as resolver

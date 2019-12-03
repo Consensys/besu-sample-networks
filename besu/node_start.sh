@@ -11,27 +11,23 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-# write pub key for checking that network works
-node_id=`hostname`
-
 PUBLIC_KEYS_DIR=${BESU_PUBLIC_KEY_DIRECTORY:=/opt/besu/public-keys/}
-
-/opt/besu/bin/besu $@ public-key export --to="${PUBLIC_KEYS_DIR}${node_id}"
-
-BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode"
+BOOTNODE_KEY_FILE="${PUBLIC_KEYS_DIR}bootnode_pubkey"
 
 # sleep loop to wait for the public key file to be written
-while [ ! -f $BOOTNODE_KEY_FILE ]
+while [ ! -f "${BOOTNODE_KEY_FILE}" ]
 do
   sleep 1
 done
 
-# get bootnode enode address
-bootnode_pubkey=`sed 's/^0x//' $BOOTNODE_KEY_FILE`
+rm -rf /opt/besu/database
+
+bootnode_pubkey=`sed 's/^0x//' ${BOOTNODE_KEY_FILE}`
 boonode_ip=`getent hosts bootnode | awk '{ print $1 }'`
 BOOTNODE_P2P_PORT="30303"
-
 bootnode_enode_address="enode://${bootnode_pubkey}@${boonode_ip}:${BOOTNODE_P2P_PORT}"
 
-# run with bootnode param
-/opt/besu/bin/besu $@ --bootnodes=$bootnode_enode_address
+p2pip=`awk 'END{print $1}' /etc/hosts`
+
+/opt/besu/bin/besu $@ --bootnodes=$bootnode_enode_address --p2p-host=$p2pip
+

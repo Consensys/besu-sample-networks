@@ -43,6 +43,38 @@ scrape_configs:
       static_configs:
         - targets: [ rpcnode:9545 ]
 
+    - job_name: node1
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ node1:9545 ]
+
+    - job_name: node2
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ node2:9545 ]
+
+    - job_name: node3
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ node3:9545 ]
+
+    - job_name: node4
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ node4:9545 ]
+
     # all the nodes override themselves if given the same name
     # so we use dns based lookup and, replace labels to
     # alter the address from 192.168.x.y:9545 to node:192.168.x.y:9545 so they are easier to see in grafana

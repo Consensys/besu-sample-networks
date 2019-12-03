@@ -51,3 +51,4 @@ else
 fi
 
 current_dir=${PWD##*/}
+

@@ -19,7 +19,7 @@ NO_LOCK_REQUIRED=false
 echo "${bold}*************************************"
 echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
-echo "Stop network"
+echo "Stopping network"
 echo "----------------------------------"
 
 docker-compose ${composeFile} stop
