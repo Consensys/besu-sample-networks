@@ -31,7 +31,3 @@ p2pip=`awk 'END{print $1}' /etc/hosts`
 
 /opt/besu/bin/besu $@ --bootnodes=$bootnode_enode_address --p2p-host=$p2pip
 
-
-
-
-

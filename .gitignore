@@ -7,7 +7,6 @@
 /privacy/besu/data*/private*
 /privacy/besu/data*/uploads
 /privacy/besu/data*/besu.ports
-logs/besu/*
-logs/orion/*
+logs/
 /volumes/
 .DS_Store

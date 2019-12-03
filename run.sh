@@ -94,7 +94,9 @@ docker-compose ${composeFile} up -d
 #list services and endpoints
 ./list.sh
 
-#list individual nodes endpoints in case we run a PoA network
 if [[ "${QUICKSTART_POA_API:-}" == "${ibft2}" ]]; then
-  ./inspect-ibft2.sh
+  echo "IBFT 2 Validator Addresses:"
+  echo "----------------------------------"
+  HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
+  echo `curl -s -X POST --data '{"jsonrpc":"2.0","method":"ibft_getValidatorsByBlockNumber","params":["latest"],"id":1}' http://${HOST}:8545 | grep 'result' `
 fi
