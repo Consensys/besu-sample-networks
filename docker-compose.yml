@@ -25,13 +25,14 @@ services:
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["--network=dev",
-              "--miner-enabled",
-              "--metrics-enabled",
-              "--metrics-host=0.0.0.0",
-              "--metrics-port=9545",
-              "--miner-coinbase=${MINER_COINBASE}",
-              "--host-whitelist=*"]
+    command: [
+      "--network=dev",
+      "--miner-enabled",
+      "--metrics-enabled",
+      "--metrics-host=0.0.0.0",
+      "--metrics-port=9545",
+      "--miner-coinbase=${MINER_COINBASE}",
+      "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/log-config.xml:/config/log-config.xml
@@ -44,11 +45,12 @@ services:
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["--network=dev",
-              "--metrics-enabled",
-              "--metrics-host=0.0.0.0",
-              "--metrics-port=9545",
-              "--host-whitelist=*"]
+    command: [
+      "--network=dev",
+      "--metrics-enabled",
+      "--metrics-host=0.0.0.0",
+      "--metrics-port=9545",
+      "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/log-config.xml:/config/log-config.xml
@@ -61,22 +63,23 @@ services:
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["--network=dev",
-              "--rpc-http-enabled",
-              "--rpc-http-host=0.0.0.0",
-              "--rpc-http-port=8545",
-              "--rpc-http-cors-origins=*",
-              "--rpc-ws-enabled",
-              "--rpc-ws-host=0.0.0.0",
-              "--rpc-ws-port=8546",
-              "--metrics-enabled",
-              "--metrics-host=0.0.0.0",
-              "--metrics-port=9545",
-              "--graphql-http-enabled",
-              "--graphql-http-host=0.0.0.0",
-              "--graphql-http-port=8547",
-              "--graphql-http-cors-origins=*",
-              "--host-whitelist=*"]
+    command: [
+      "--network=dev",
+      "--rpc-http-enabled",
+      "--rpc-http-host=0.0.0.0",
+      "--rpc-http-port=8545",
+      "--rpc-http-cors-origins=*",
+      "--rpc-ws-enabled",
+      "--rpc-ws-host=0.0.0.0",
+      "--rpc-ws-port=8546",
+      "--metrics-enabled",
+      "--metrics-host=0.0.0.0",
+      "--metrics-port=9545",
+      "--graphql-http-enabled",
+      "--graphql-http-host=0.0.0.0",
+      "--graphql-http-port=8547",
+      "--graphql-http-cors-origins=*",
+      "--host-whitelist=*"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/log-config.xml:/config/log-config.xml
