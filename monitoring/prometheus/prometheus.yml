@@ -67,13 +67,21 @@ scrape_configs:
       static_configs:
         - targets: [ node3:9545 ]
 
-    - job_name: node4
+    - job_name: nodev3
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ node4:9545 ]
+        - targets: [ nodev3:9545 ]
+
+    - job_name: nodev4
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ nodev4:9545 ]
 
     # all the nodes override themselves if given the same name
     # so we use dns based lookup and, replace labels to
