@@ -69,6 +69,6 @@ else
   echo "Web block explorer address          : http://${HOST}:${explorerPort}/"
   echo "Prometheus address                  : http://${HOST}:9090/graph"
   echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-  echo "Kibana address                     : http://${HOST}:5601/app/kibana#/discover"
+  echo "Kibana logs address                 : http://${HOST}:5601/app/kibana#/discover"
   echo "****************************************************************"
 fi
