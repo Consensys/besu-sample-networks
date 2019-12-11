@@ -1,0 +1,143 @@
+---
+version: '3.4'
+services:
+
+  bootnode:
+    build:
+      context: besu/.
+      args:
+        BESU_VERSION: ${BESU_VERSION}
+    image: quickstart/besu:${BESU_VERSION}-ibft2
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    entrypoint: /opt/besu/bootnode_start.sh
+    command: &base_options [
+      "--data-path=/opt/besu/data",
+      "--genesis-file=/config/genesis.json",
+      "--node-private-key-file=/opt/besu/keys/key",
+      "--rpc-http-enabled",
+      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+      "--rpc-http-host=0.0.0.0",
+      "--rpc-http-port=8545",
+      "--rpc-http-cors-origins=*",
+      "--rpc-ws-enabled",
+      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+      "--rpc-ws-host=0.0.0.0",
+      "--rpc-ws-port=8546",
+      "--graphql-http-enabled",
+      "--graphql-http-host=0.0.0.0",
+      "--graphql-http-port=8547",
+      "--graphql-http-cors-origins=*",
+      "--metrics-enabled",
+      "--metrics-host=0.0.0.0",
+      "--metrics-port=9545",
+      "--host-whitelist=*"]
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
+
+    rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
+      image: quickstart/besu:${BESU_VERSION}-ibft2
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      command: *base_options
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/ibft2Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+      depends_on:
+        - bootnode
+      ports:
+        - 8545:8545/tcp
+
+    ethsignerRpcNode:
+      image: pegasyseng/ethsigner:latest
+      command: [
+        "--chain-id=2018",
+        "--http-listen-host=0.0.0.0",
+        "--downstream-http-port=8545",
+        "--downstream-http-host=rpcnode",
+        "file-based-signer",
+        "-k",
+        "/opt/ethsigner/keyfile",
+        "-p",
+        "/opt/ethsigner/passwordfile"
+      ]
+      volumes:
+        - ./config/ethsigner/password:/opt/ethsigner/passwordfile
+        - ./config/ethsigner/key:/opt/ethsigner/keyfile
+      depends_on:
+        - bootnode
+        - rpcnode
+      ports:
+        - 18545:8545/tcp
+
+  nodev3:
+    image: quickstart/besu:${BESU_VERSION}-ibft2
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
+    depends_on:
+      - bootnode
+
+  nodev4:
+    image: quickstart/besu:${BESU_VERSION}-ibft2
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
+      - ./logs/besu:/var/log/
+    depends_on:
+      - bootnode
+
+  explorer:
+    build: block-explorer-light/.
+    image: quickstart/block-explorer-light:${BESU_VERSION}-ibft2
+    depends_on:
+      - rpcnode
+    ports:
+      - "${EXPLORER_PORT_MAPPING:-}80"
+
+  prometheus:
+    image: "prom/prometheus"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090/tcp
+
+  grafana:
+    image: "grafana/grafana"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+    volumes:
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+      - grafana:/var/lib/grafana
+    ports:
+      - 3000:3000/tcp
+
+
+volumes:
+  public-keys:
+
+  prometheus:
+
+  grafana:
