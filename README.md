@@ -19,7 +19,7 @@ To run this tutorial, you must have the following installed:
 ## For Blockchain quickstarts without privacy (orion):
 For complete and up-to-date documentation, please see [Docker quick-start, on the Besu documentation site](https://besu.hyperledger.org/Tutorials/Quickstarts/Private-Network-Quickstart/).
 
-## For Blockchain quickstarts without privacy (orion) enables:
+## For Blockchain quickstarts with privacy (orion):
 
 `./run-privacy.sh` creates docker images for configuring a network of
 Besu nodes as well as Orion nodes which include 3 nodes with privacy
