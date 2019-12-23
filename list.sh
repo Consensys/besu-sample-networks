@@ -39,7 +39,7 @@ done
 echo "Setting up the besu index pattern in kibana"
 curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
 
-if [ -z `docker-compose -f docker-compose_privacy.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy.yml ps -q orion3)` ]; then
+if [ -z `docker-compose -f docker-compose_privacy_poa.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy_poa.yml ps -q orion3)` ]; then
   echo "Orion not running, skipping the orion index pattern in kibana."
 else
   echo "\nSetting up the orion index pattern in kibana"

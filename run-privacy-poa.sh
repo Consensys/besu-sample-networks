@@ -17,7 +17,7 @@ NO_LOCK_REQUIRED=true
 . ./.common.sh
 
 
-composeFile="-f docker-compose_poa.yml"
+composeFile="-f docker-compose_privacy_poa.yml"
 PARAMS=""
 
 displayUsage()
