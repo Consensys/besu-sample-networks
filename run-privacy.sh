@@ -16,7 +16,7 @@ NO_LOCK_REQUIRED=true
 . ./.env
 . ./.common.sh
 
-composeFile="-f docker-compose_privacy.yml"
+composeFile="-f docker-compose_privacy_pow.yml"
 
 PARAMS=""
 while [ $# -gt 0 ]; do
