@@ -1,0 +1,308 @@
+---
+  version: '3.4'
+  services:
+  
+    orion1:
+      image: "pegasyseng/orion:develop"
+      environment:
+        - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+      command: ["/config/orion/orion.conf"]
+      volumes:
+        - ./config/orion/log-config.xml:/config/log-config.xml
+        - ./config/orion/networkFiles/orion1:/config/orion/
+        - ./logs/orion:/var/log/
+  
+    orion2:
+      image: "pegasyseng/orion:develop"
+      environment:
+        - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+      command: ["/config/orion/orion.conf"]
+      volumes:
+        - ./config/orion/log-config.xml:/config/log-config.xml
+        - ./config/orion/networkFiles/orion2:/config/orion/
+        - ./logs/orion:/var/log/
+  
+    orion3:
+      image: "pegasyseng/orion:develop"
+      environment:
+        - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+      command: ["/config/orion/orion.conf"]
+      volumes:
+        - ./config/orion/log-config.xml:/config/log-config.xml
+        - ./config/orion/networkFiles/orion3:/config/orion/
+        - ./logs/orion:/var/log/
+  
+    bootnode:
+      build:
+        context: besu/.
+        args:
+          BESU_VERSION: ${BESU_VERSION}
+      image: quickstart/besu:${BESU_VERSION}-privacy
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+        - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+      entrypoint: /opt/besu/bootnode_start.sh
+      command: &base_options [
+        "--data-path=/opt/besu/data",
+        "--genesis-file=/config/genesis.json",
+        "--node-private-key-file=/opt/besu/keys/key",
+        "--rpc-http-enabled",
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+        "--rpc-http-host=0.0.0.0",
+        "--rpc-http-port=8545",
+        "--rpc-http-cors-origins=*",
+        "--rpc-ws-enabled",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${QUICKSTART_POA_API-ibft}",
+        "--rpc-ws-host=0.0.0.0",
+        "--rpc-ws-port=8546",
+        "--graphql-http-enabled",
+        "--graphql-http-host=0.0.0.0",
+        "--graphql-http-port=8547",
+        "--graphql-http-cors-origins=*",
+        "--metrics-enabled",
+        "--metrics-host=0.0.0.0",
+        "--metrics-port=9545",
+        "--host-whitelist=*"]
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+  
+    rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
+      image: quickstart/besu:${BESU_VERSION}-privacy
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      command: [
+        "--genesis-file=/config/genesis.json",
+        "--rpc-http-enabled",
+        "--rpc-http-host=0.0.0.0",
+        "--rpc-http-port=8545",
+        "--rpc-http-cors-origins=*",
+        "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-ws-enabled",
+        "--rpc-ws-host=0.0.0.0",
+        "--rpc-ws-port=8546",
+        "--host-whitelist=*",
+        "--metrics-enabled",
+        "--metrics-host=0.0.0.0",
+        "--metrics-port=9545",
+        "--min-gas-price=0"]
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+      depends_on:
+        - bootnode
+      ports:
+        - 8545:8545/tcp
+    
+    node1:
+      image: quickstart/besu:${BESU_VERSION}-privacy
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      command: [
+        "--node-private-key-file=/opt/besu/keys/key",
+        "--genesis-file=/config/genesis.json",
+        "--rpc-http-enabled",
+        "--rpc-http-host=0.0.0.0",
+        "--rpc-http-port=8545",
+        "--rpc-http-cors-origins=*",
+        "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-ws-enabled",
+        "--rpc-ws-host=0.0.0.0",
+        "--rpc-ws-port=8546",
+        "--host-whitelist=*",
+        "--metrics-enabled",
+        "--metrics-host=0.0.0.0",
+        "--metrics-port=9545",
+        "--min-gas-price=0",
+        "--privacy-enabled=true",
+        "--privacy-url=http://orion1:8888",
+        "--privacy-public-key-file=/config/orion/orion.pub"]
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+        - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
+      depends_on:
+        - bootnode
+        - orion1
+      ports:
+        - 20000:8545/tcp
+        - 20001:8546/tcp
+  
+    node2:
+      image: quickstart/besu:${BESU_VERSION}-privacy
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      command: [
+        "--node-private-key-file=/opt/besu/keys/key",
+        "--genesis-file=/config/genesis.json",
+        "--rpc-http-enabled",
+        "--rpc-http-host=0.0.0.0",
+        "--rpc-http-port=8545",
+        "--rpc-http-cors-origins=*",
+        "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-ws-enabled",
+        "--rpc-ws-host=0.0.0.0",
+        "--rpc-ws-port=8546",
+        "--host-whitelist=*",
+        "--metrics-enabled",
+        "--metrics-host=0.0.0.0",
+        "--metrics-port=9545",
+        "--min-gas-price=0",
+        "--privacy-enabled=true",
+        "--privacy-url=http://orion2:8888",
+        "--privacy-public-key-file=/config/orion/orion.pub"]
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+        - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
+      depends_on:
+        - bootnode
+        - orion2
+      ports:
+        - 20002:8545/tcp
+        - 20003:8546/tcp
+  
+    node3:
+      image: quickstart/besu:${BESU_VERSION}-privacy
+      environment:
+        - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      command: [
+        "--node-private-key-file=/opt/besu/keys/key",
+        "--genesis-file=/config/genesis.json",
+        "--rpc-http-enabled",
+        "--rpc-http-host=0.0.0.0",
+        "--rpc-http-port=8545",
+        "--rpc-http-cors-origins=*",
+        "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-ws-enabled",
+        "--rpc-ws-host=0.0.0.0",
+        "--rpc-ws-port=8546",
+        "--host-whitelist=*",
+        "--metrics-enabled",
+        "--metrics-host=0.0.0.0",
+        "--metrics-port=9545",
+        "--min-gas-price=0",
+        "--privacy-enabled=true",
+        "--privacy-url=http://orion3:8888",
+        "--privacy-public-key-file=/config/orion/orion.pub"]
+      volumes:
+        - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+        - ./config/besu/log-config.xml:/config/log-config.xml
+        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
+        - ./logs/besu:/var/log/
+        - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
+      depends_on:
+        - bootnode
+        - orion3
+      ports:
+        - 20004:8545/tcp
+        - 20005:8546/tcp
+  
+    explorer:
+      build: block-explorer-light/.
+      image: quickstart/block-explorer-light:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
+      depends_on:
+        - rpcnode
+      ports:
+        - "${EXPLORER_PORT_MAPPING:-}80"
+  
+    prometheus:
+      image: "prom/prometheus"
+      volumes:
+        - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        - prometheus:/prometheus
+      command:
+        - --config.file=/etc/prometheus/prometheus.yml
+      ports:
+        - 9090:9090/tcp
+  
+    grafana:
+      image: "grafana/grafana"
+      environment:
+        - GF_AUTH_ANONYMOUS_ENABLED=true
+      volumes:
+        - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
+        - grafana:/var/lib/grafana
+      ports:
+        - 3000:3000/tcp
+  
+    redis:
+      image: redis:alpine
+  
+    elasticsearch:
+      build: ./elasticsearch
+      environment:
+        - bootstrap.memory_lock=true
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - "http.host=0.0.0.0"
+        - "transport.host=127.0.0.1"
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+        nofile:
+          soft: 65536
+          hard: 65536
+      cap_add:
+        - IPC_LOCK
+  
+    kibana:
+      image: docker.elastic.co/kibana/kibana:7.4.2
+      environment:
+        ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+        XPACK_MONITORING_ENABLED: "true"
+        XPACK_MONITORING_COLLECTION_ENABLED: "true"
+        SERVER_NAME: "localhost"
+      depends_on:
+        - elasticsearch
+      links:
+        - elasticsearch
+      ports:
+        - 5601:5601/tcp
+  
+    logstash:
+      build: ./logstash
+      environment:
+        - ES_HOST=http://elasticsearch:9200
+        - REDIS_HOST=redis
+        - REDIS_PORT=6379
+      depends_on:
+        - redis
+        - elasticsearch
+      links:
+        - redis
+        - elasticsearch
+  
+    filebeat:
+      build: ./filebeat
+      environment:
+        - ENV_NAME=dev
+        - IP_ADDRESS=127.0.0.1
+        - REDIS_HOST=redis
+        - REDIS_PORT=6379
+      depends_on:
+        - redis
+      links:
+        - redis
+      volumes:
+        - ./logs/besu/:/var/log/besu/
+  
+  volumes:
+    public-keys:
+  
+    prometheus:
+  
+    grafana:
