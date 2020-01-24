@@ -4,17 +4,26 @@
 
 To run this tutorial, you must have the following installed:
 
-- MacOS or Linux 
-   
-    !!! important 
-        The Private Network Quickstart is not supported on Windows. If using Windows, run the quickstart
-        inside a Linux VM such as Ubuntu. 
+- MacOS or Linux
 
-- [Docker and Docker-compose](https://docs.docker.com/compose/install/) 
+    !!! important
+        The Private Network Quickstart is not supported on Windows. If using Windows, run the quickstart
+        inside a Linux VM such as Ubuntu.
+
+- [Docker and Docker-compose](https://docs.docker.com/compose/install/)
 
 | ⚠️ **Note**: If on MacOS, please ensure that you allow docker to use upto 4G of memory under the _Resources_ section. The docker [site](https://docs.docker.com/docker-for-mac/) has details on how to do this |
 | --- |
 
+## To run a DApp with the deployed network:
+- Install [metamask](https://metamask.io/) to your browser
+- Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the following private_key: `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
+- Run `./run-dapp.sh` and when that completes open a new tab in your browser and go to `http://localhost:3001`
+- This opens up the Truffle pet-shop box app and you can adopt a dog from there.
+NOTE: Once you have adopted a dog, you can also go to the block explorer and search for the transaction which will bring up all its details
+
+Behind the scenes, this has used a smart contract, compiled and created a migration for it and then deployed it to our test network. There is then a DApp which lets users 'adopt' dogs and uses the smart contract to communicate with the blockchain.
+The source code for the smart contract and the code can be found in the folder `pet-shop`
 
 ## For Blockchain quickstarts without privacy (orion):
 For complete and up-to-date documentation, please see [Docker quick-start, on the Besu documentation site](https://besu.hyperledger.org/Tutorials/Quickstarts/Private-Network-Quickstart/).
@@ -36,13 +45,13 @@ node3 | 0x998c8bc11c28b667e4b1930c3fe3c9ab1cde3c52 | T1ItOQxwgY1pTW6YXb2EbKXYkK4
 ### Use `eeajs` to deploy contracts
 #### Prerequisites
  - [Nodejs](https://nodejs.org/en/download/)
- 
- Install the following after downloading `Nodejs` - 
+
+ Install the following after downloading `Nodejs` -
  - [web3](https://www.npmjs.com/package/web3)
  - [axios](https://www.npmjs.com/package/axios)
-  
- Clone [eeajs](https://github.com/PegaSysEng/web3js-eea) github repo. 
- 
+
+ Clone [eeajs](https://github.com/PegaSysEng/web3js-eea) github repo.
+
 #### EventEmitter contract
 
 After the containers from above have started, execute `node example/eventEmitter.js` in the `web3js-eea` project that you have just cloned
@@ -60,7 +69,5 @@ This can be verified from the `data` field of the `logs` which is `1`.
 ### Stop Services and Network
 `./stop.sh` stops all the docker containers created.
 
-### Remove stopped containers and volumes 
-`./remove.sh` stops and removes all the containers and volumes. 
-
-
+### Remove stopped containers and volumes
+`./remove.sh` stops and removes all the containers and volumes.

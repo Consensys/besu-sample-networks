@@ -11,17 +11,21 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
-NO_LOCK_REQUIRED=false
-
 . ./.env
-. ./.common.sh
 
-echo "${bold}*************************************"
-echo "Besu Quickstart ${version}"
-echo "*************************************${normal}"
-echo "Stopping network"
-echo "----------------------------------"
+# Import the following accounts into metamask
+# 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
 
-docker-compose ${composeFile} stop
-# stop the dapp if its running
-docker stop besu-quickstart_pet_shop
+# build the dapp
+cd pet-shop
+npm install
+
+# compile the contracts
+truffle compile
+truffle migrate --network quickstartWallet
+truffle test --network quickstartWallet
+
+docker build . -t besu-quickstart_pet_shop
+docker run -p 3001:3001 --name besu-quickstart_pet_shop --detach besu-quickstart_pet_shop
+
+
