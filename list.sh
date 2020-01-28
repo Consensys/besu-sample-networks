@@ -30,22 +30,33 @@ echo "----------------------------------"
 docker-compose ps
 dots=""
 maxRetryCount=50
-while [ "$(curl -m 10 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:5601/api/status)" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
-do
-  dots=$dots"."
-  printf "Kibana is starting, please wait $dots\\r"
-  sleep 10
-done
-echo "Setting up the besu index pattern in kibana"
-curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
 
-if [ -z `docker-compose -f docker-compose_privacy.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy.yml ps -q orion3)` ]; then
-  echo "Orion not running, skipping the orion index pattern in kibana."
-elif [ -z `docker-compose -f docker-compose_privacy_poa.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy_poa.yml ps -q orion3)` ]; then
-  echo "Orion not running, skipping the orion index pattern in kibana."
-else
-  echo "\nSetting up the orion index pattern in kibana"
-  curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/orion" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "orion-*","timeFieldName": "@timestamp"}}'
+# Determine if ELK is setup
+elk_setup=true
+if [ -z `docker-compose -f docker-compose_elk.yml ps -q kibana` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_elk.yml ps -q kibana)` ] ||
+    [ -z `docker-compose -f docker-compose_elk_poa.yml ps -q kibana` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_elk_poa.yml ps -q kibana)` ]; then
+  elk_setup=false
+fi
+
+if [ $elk_setup == true ]; then
+    while [ "$(curl -m 10 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:5601/api/status)" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
+    do
+      dots=$dots"."
+      printf "Kibana is starting, please wait $dots\\r"
+      sleep 10
+    done
+
+    echo "Setting up the besu index pattern in kibana"
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
+
+    if [ -z `docker-compose -f docker-compose_privacy.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy.yml ps -q orion3)` ]; then
+      echo "Orion not running, skipping the orion index pattern in kibana."
+    elif [ -z `docker-compose -f docker-compose_privacy_poa.yml ps -q orion3` ] || [ -z `docker ps -q --no-trunc | grep $(docker-compose -f docker-compose_privacy_poa.yml ps -q orion3)` ]; then
+      echo "Orion not running, skipping the orion index pattern in kibana."
+    else
+      echo "\nSetting up the orion index pattern in kibana"
+      curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/orion" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "orion-*","timeFieldName": "@timestamp"}}'
+    fi
 fi
 
 # Get individual port mapping for exposed services
@@ -71,6 +82,8 @@ else
   echo "Web block explorer address          : http://${HOST}:${explorerPort}/"
   echo "Prometheus address                  : http://${HOST}:9090/graph"
   echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
-  echo "Kibana logs address                 : http://${HOST}:5601/app/kibana#/discover"
+  if [ $elk_setup == true ]; then
+    echo "Kibana logs address                 : http://${HOST}:5601/app/kibana#/discover"
+  fi
   echo "****************************************************************"
 fi
