@@ -23,5 +23,6 @@ echo "Stopping network"
 echo "----------------------------------"
 
 docker-compose ${composeFile} stop
-# stop the dapp if its running
-docker stop besu-quickstart_pet_shop
+if [[ ! -z `docker ps -a | grep besu-quickstart_pet_shop` ]]; then
+  docker stop besu-quickstart_pet_shop
+fi
