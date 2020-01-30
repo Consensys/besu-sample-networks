@@ -17,7 +17,6 @@ NO_LOCK_REQUIRED=true
 . ./.common.sh
 
 
-composeFile="-f docker-compose_privacy.yml"
 PARAMS=""
 
 displayUsage()
@@ -30,6 +29,7 @@ displayUsage()
                                               automatically selected by Docker."
   echo "    -c or --consensus <ibft2|clique|ethash> : the consensus mechanism that you want to run
                                               on your network, default is ethash"
+  echo "    -e or --elk                             : setup ELK with the network."
   exit 0
 }
 
@@ -42,22 +42,24 @@ displayUsage()
 ibft2='ibft'
 clique='clique' # value to use for clique option
 
-while [ $# -gt 0 ]; do
-  case "$1" in
-    -h|--help)
+composeFile="docker-compose_privacy"
+
+while getopts "hep:c:" o; do
+  case "${o}" in
+    h)
       displayUsage
       ;;
-    -p|--explorer-port)
-      export EXPLORER_PORT_MAPPING="${2}:"
-      shift 2
+    p)
+      port=${OPTARG}
+      export EXPLORER_PORT_MAPPING="$port:"
       ;;
-    -c|--consensus)
-      case "${2}" in
+    c)
+      algo=${OPTARG}
+      case "${algo}" in
         ibft2|clique)
-          export QUICKSTART_POA_NAME="${2}"
-          export QUICKSTART_POA_API="${!2}"
-          export QUICKSTART_VERSION="${BESU_VERSION}-${QUICKSTART_POA_NAME}"
-          composeFile="-f docker-compose_privacy_poa.yml"
+          export QUICKSTART_POA_API="${!algo}"
+          export QUICKSTART_VERSION="${BESU_VERSION}-${algo}"
+          composeFile="${composeFile}_poa"
           ;;
         ethash)
           ;;
@@ -65,18 +67,18 @@ while [ $# -gt 0 ]; do
           echo "Error: Unsupported consensus value." >&2
           displayUsage
       esac
-      shift 2
       ;;
-    --) # end argument parsing
-      shift
-      break
+    e)
+      elk_compose="${composeFile/docker-compose/docker-compose_elk}"
+      composeFile="$elk_compose"
       ;;
-    -*|--*=) # unsupported flags
-      echo "Error: Unsupported flag." >&2
+    *)
       displayUsage
-      ;;
+    ;;
   esac
 done
+
+composeFile="-f ${composeFile}.yml"
 
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
