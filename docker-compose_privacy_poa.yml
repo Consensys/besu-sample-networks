@@ -1,7 +1,7 @@
 ---
   version: '3.4'
   services:
-  
+
     orion1:
       image: "pegasyseng/orion:develop"
       environment:
@@ -11,7 +11,7 @@
         - ./config/orion/log-config.xml:/config/log-config.xml
         - ./config/orion/networkFiles/orion1:/config/orion/
         - ./logs/orion:/var/log/
-  
+
     orion2:
       image: "pegasyseng/orion:develop"
       environment:
@@ -21,7 +21,7 @@
         - ./config/orion/log-config.xml:/config/log-config.xml
         - ./config/orion/networkFiles/orion2:/config/orion/
         - ./logs/orion:/var/log/
-  
+
     orion3:
       image: "pegasyseng/orion:develop"
       environment:
@@ -31,7 +31,7 @@
         - ./config/orion/log-config.xml:/config/log-config.xml
         - ./config/orion/networkFiles/orion3:/config/orion/
         - ./logs/orion:/var/log/
-  
+
     bootnode:
       build:
         context: besu/.
@@ -69,7 +69,7 @@
         - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
         - ./logs/besu:/var/log/
-  
+
     rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
       image: quickstart/besu:${BESU_VERSION}-privacy
       environment:
@@ -99,7 +99,7 @@
         - bootnode
       ports:
         - 8545:8545/tcp
-    
+
     node1:
       image: quickstart/besu:${BESU_VERSION}-privacy
       environment:
@@ -136,7 +136,7 @@
       ports:
         - 20000:8545/tcp
         - 20001:8546/tcp
-  
+
     node2:
       image: quickstart/besu:${BESU_VERSION}-privacy
       environment:
@@ -173,7 +173,7 @@
       ports:
         - 20002:8545/tcp
         - 20003:8546/tcp
-  
+
     node3:
       image: quickstart/besu:${BESU_VERSION}-privacy
       environment:
@@ -210,7 +210,7 @@
       ports:
         - 20004:8545/tcp
         - 20005:8546/tcp
-  
+
     explorer:
       build: block-explorer-light/.
       image: quickstart/block-explorer-light:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
@@ -218,7 +218,7 @@
         - rpcnode
       ports:
         - "${EXPLORER_PORT_MAPPING:-}80"
-  
+
     prometheus:
       image: "prom/prometheus"
       volumes:
@@ -228,7 +228,7 @@
         - --config.file=/etc/prometheus/prometheus.yml
       ports:
         - 9090:9090/tcp
-  
+
     grafana:
       image: "grafana/grafana"
       environment:
@@ -238,71 +238,10 @@
         - grafana:/var/lib/grafana
       ports:
         - 3000:3000/tcp
-  
-    redis:
-      image: redis:alpine
-  
-    elasticsearch:
-      build: ./elasticsearch
-      environment:
-        - bootstrap.memory_lock=true
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        - "http.host=0.0.0.0"
-        - "transport.host=127.0.0.1"
-      ulimits:
-        memlock:
-          soft: -1
-          hard: -1
-        nofile:
-          soft: 65536
-          hard: 65536
-      cap_add:
-        - IPC_LOCK
-  
-    kibana:
-      image: docker.elastic.co/kibana/kibana:7.4.2
-      environment:
-        ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-        XPACK_MONITORING_ENABLED: "true"
-        XPACK_MONITORING_COLLECTION_ENABLED: "true"
-        SERVER_NAME: "localhost"
-      depends_on:
-        - elasticsearch
-      links:
-        - elasticsearch
-      ports:
-        - 5601:5601/tcp
-  
-    logstash:
-      build: ./logstash
-      environment:
-        - ES_HOST=http://elasticsearch:9200
-        - REDIS_HOST=redis
-        - REDIS_PORT=6379
-      depends_on:
-        - redis
-        - elasticsearch
-      links:
-        - redis
-        - elasticsearch
-  
-    filebeat:
-      build: ./filebeat
-      environment:
-        - ENV_NAME=dev
-        - IP_ADDRESS=127.0.0.1
-        - REDIS_HOST=redis
-        - REDIS_PORT=6379
-      depends_on:
-        - redis
-      links:
-        - redis
-      volumes:
-        - ./logs/besu/:/var/log/besu/
-  
+
   volumes:
     public-keys:
-  
+
     prometheus:
-  
+
     grafana:
