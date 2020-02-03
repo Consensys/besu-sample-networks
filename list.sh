@@ -16,7 +16,6 @@ NO_LOCK_REQUIRED=false
 . ./.env
 . ./.common.sh
 
-EXPLORER_SERVICE=explorer
 HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays links to exposed services
@@ -59,18 +58,6 @@ if [ $elk_setup == true ]; then
     fi
 fi
 
-# Get individual port mapping for exposed services
-explorerMapping=`docker-compose port explorer 80`
-explorerPort="${explorerMapping##*:}"
-dots=""
-maxRetryCount=50
-while [ "$(curl -m 10 -s -o /dev/null -w ''%{http_code}'' http://${HOST}:${explorerPort})" != "200" ] && [ ${#dots} -le ${maxRetryCount} ]
-do
-  dots=$dots"."
-  printf "Block explorer is starting, please wait $dots\\r"
-  sleep 10
-done
-
 echo "****************************************************************"
 if [ ${#dots} -gt ${maxRetryCount} ]; then
   echo "ERROR: Web block explorer is not started at http://${HOST}:${explorerPort} !"
@@ -79,7 +66,7 @@ else
   echo "JSON-RPC HTTP service endpoint      : http://${HOST}:8545"
   echo "JSON-RPC WebSocket service endpoint : ws://${HOST}:8546"
   echo "GraphQL HTTP service endpoint       : http://${HOST}:8547"
-  echo "Web block explorer address          : http://${HOST}:${explorerPort}/"
+  echo "Web block explorer address          : http://${HOST}:25000/"
   echo "Prometheus address                  : http://${HOST}:9090/graph"
   echo "Grafana address                     : http://${HOST}:3000/d/XE4V0WGZz/besu-overview?orgId=1&refresh=10s&from=now-30m&to=now&var-system=All"
   if [ $elk_setup == true ]; then

@@ -16,6 +16,12 @@ NO_LOCK_REQUIRED=false
 . ./.env
 . ./.common.sh
 
+removeDockerImage(){
+  if [[ ! -z `docker ps -a | grep $1` ]]; then
+    docker image rm $1
+  fi
+}
+
 echo "${bold}*************************************"
 echo "Besu Quickstart ${version}"
 echo "*************************************${normal}"
@@ -25,14 +31,14 @@ docker-compose ${composeFile} rm -sfv
 if [[ ! -z `docker ps -a | grep besu-quickstart_pet_shop` ]]; then
   docker stop besu-quickstart_pet_shop
   docker rm besu-quickstart_pet_shop
-  docker image rm besu-quickstart_pet_shop
+  removeDockerImage besu-quickstart_pet_shop
 fi
+
 
 docker image rm quickstart/besu:${version}
 docker image rm quickstart/block-explorer-light:${version}
-docker image rm besu-quickstart_filebeat
-docker image rm besu-quickstart_logstash
-docker image rm besu-quickstart_elasticsearch
-
+removeDockerImage besu-quickstart_filebeat
+removeDockerImage besu-quickstart_logstash
+removeDockerImage besu-quickstart_elasticsearch
 rm ${LOCK_FILE}
 echo "Lock file ${LOCK_FILE} removed"
