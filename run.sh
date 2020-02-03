@@ -24,9 +24,6 @@ displayUsage()
   echo "This script creates and start a local private Besu network using Docker."
   echo "You can select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
-  echo "    -p <NUMBER>              : the port number you want to use for the endpoint
-                                       mapping, otherwise default is a port
-                                       automatically selected by Docker."
   echo "    -c <ibft2|clique|ethash> : the consensus mechanism that you want to run
                                        on your network, default is ethash"
   echo "    -e                       : setup ELK with the network."
@@ -48,10 +45,6 @@ while getopts "hep:c:" o; do
   case "${o}" in
     h)
       displayUsage
-      ;;
-    p)
-      port=${OPTARG}
-      export EXPLORER_PORT_MAPPING="$port:"
       ;;
     c)
       algo=${OPTARG}
