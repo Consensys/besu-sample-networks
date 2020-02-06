@@ -28,17 +28,34 @@ echo "*************************************${normal}"
 echo "Stop and remove network..."
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
+if [[ ! -z `docker ps -a | grep besu-quickstart_permissioning_dapp` ]]; then
+  docker stop besu-quickstart_permissioning_dapp
+  docker rm besu-quickstart_permissioning_dapp
+  removeDockerImage besu-quickstart_permissioning_dapp
+fi
 if [[ ! -z `docker ps -a | grep besu-quickstart_pet_shop` ]]; then
   docker stop besu-quickstart_pet_shop
   docker rm besu-quickstart_pet_shop
   removeDockerImage besu-quickstart_pet_shop
 fi
-
+rm -rf permissioning-dapp/build
+rm -rf permissioning-smart-contracts
 
 docker image rm quickstart/besu:${version}
 docker image rm quickstart/block-explorer-light:${version}
 removeDockerImage besu-quickstart_filebeat
 removeDockerImage besu-quickstart_logstash
 removeDockerImage besu-quickstart_elasticsearch
+removeDockerImage besu-quickstart_permissioning_dapp
 rm ${LOCK_FILE}
 echo "Lock file ${LOCK_FILE} removed"
+
+# clean up permissioning data volumes if present
+if [[ -d config/besu/networkFiles/bootnode/data/database ]]; then
+  #cleanup old data mounts
+  folders=(bootnode rpcnode node1 node2 node3 node4 node5)
+  for i in "${folders[@]}"
+  do
+    sudo rm -rf config/besu/networkFiles/$i/data/*
+  done
+fi

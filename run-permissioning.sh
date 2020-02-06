@@ -16,7 +16,6 @@ NO_LOCK_REQUIRED=true
 . ./.env
 . ./.common.sh
 
-
 PARAMS=""
 
 displayUsage()
@@ -24,11 +23,10 @@ displayUsage()
   echo "This script creates and start a local private Besu network using Docker."
   echo "You can select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
-  echo "    -c <ibft2|clique|ethash> : the consensus mechanism that you want to run
-                                       on your network, default is ethash"
   echo "    -e                       : setup ELK with the network."
   exit 0
 }
+
 
 # options values and api values are not necessarily identical.
 # value to use for ibft2 option as required for Besu --rpc-http-api and --rpc-ws-api
@@ -37,29 +35,12 @@ displayUsage()
 # that's the reason of this not obvious mapping.
 # variables names must be similar to the option -c|--consensus values to map.
 ibft2='ibft'
-clique='clique' # value to use for clique option
+composeFile="docker-compose_permissioning_poa"
 
-composeFile="docker-compose_privacy"
-
-while getopts "hec:" o; do
+while getopts "he" o; do
   case "${o}" in
     h)
       displayUsage
-      ;;
-    c)
-      algo=${OPTARG}
-      case "${algo}" in
-        ibft2|clique)
-          export QUICKSTART_POA_API="${!algo}"
-          export QUICKSTART_VERSION="${BESU_VERSION}-${algo}"
-          composeFile="${composeFile}_poa"
-          ;;
-        ethash)
-          ;;
-        *)
-          echo "Error: Unsupported consensus value." >&2
-          displayUsage
-      esac
       ;;
     e)
       elk_compose="${composeFile/docker-compose/docker-compose_elk}"
@@ -72,6 +53,21 @@ while getopts "hec:" o; do
 done
 
 composeFile="-f ${composeFile}.yml"
+
+echo "Checkout smart contracts and compile to get deployedByteCode to put into genesis file"
+git clone https://github.com/PegaSysEng/permissioning-smart-contracts
+cd permissioning-smart-contracts
+yarn install
+yarn run build
+cd ..
+
+# compile the code and set it in the genesis file
+rm config/besu/ibft2GenesisPermissioning.json
+cp config/besu/ibft2GenesisPermissioning.json.template config/besu/ibft2GenesisPermissioning.json
+node_ingress_code=`cat permissioning-smart-contracts/src/chain/abis/NodeIngress.json | jq '.["deployedBytecode"]'`
+account_ingress_code=`cat permissioning-smart-contracts/src/chain/abis/AccountIngress.json | jq '.["deployedBytecode"]'`
+sed -i "s/NODE_INGRESS_CODE/$node_ingress_code/g" config/besu/ibft2GenesisPermissioning.json
+sed -i "s/ACCOUNT_INGRESS_CODE/$account_ingress_code/g" config/besu/ibft2GenesisPermissioning.json
 
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
@@ -95,3 +91,4 @@ if [[ "${QUICKSTART_POA_API:-}" == "${ibft2}" ]]; then
   HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
   echo `curl -s -X POST --data '{"jsonrpc":"2.0","method":"ibft_getValidatorsByBlockNumber","params":["latest"],"id":1}' http://${HOST}:8545 | grep 'result' `
 fi
+sleep 30

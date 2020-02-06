@@ -41,7 +41,7 @@ clique='clique' # value to use for clique option
 
 composeFile="docker-compose"
 
-while getopts "hep:c:" o; do
+while getopts "hec:" o; do
   case "${o}" in
     h)
       displayUsage

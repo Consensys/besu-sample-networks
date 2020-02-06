@@ -10,12 +10,10 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    entrypoint: /opt/besu/bootnode_start.sh --network=dev --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545 --host-whitelist=*
+    entrypoint: /opt/besu/bootnode_start.sh --network=dev --config-file=/config/config.toml --min-gas-price=0
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     ports:
       - 30303:30303/tcp
       - 30303:30303/udp
@@ -24,19 +22,14 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--network=dev",
-      "--miner-enabled",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--miner-coinbase=${MINER_COINBASE}",
-      "--host-whitelist=*"]
+      "--miner-enabled=true",
+      "--miner-coinbase=${MINER_COINBASE}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     depends_on:
       - bootnode
 
@@ -44,17 +37,12 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
-      "--network=dev",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--host-whitelist=*"]
+      "--config-file=/config/config.toml",
+      "--network=dev"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     depends_on:
       - bootnode
 
@@ -62,28 +50,12 @@ services:
     image: quickstart/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
-      "--network=dev",
-      "--rpc-http-enabled",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-ws-enabled",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--graphql-http-enabled",
-      "--graphql-http-host=0.0.0.0",
-      "--graphql-http-port=8547",
-      "--graphql-http-cors-origins=*",
-      "--host-whitelist=*"]
+      "--config-file=/config/config.toml",
+      "--network=dev"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     depends_on:
       - bootnode
     ports:

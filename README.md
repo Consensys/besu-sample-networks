@@ -12,7 +12,7 @@ To run these tutorials, you must have the following installed:
 
 - On Windows ensure that the drive that this repo is cloned onto is a "Shared Drive" with Docker Desktop
 - On Windows we recommend running all commands from GitBash
-- [Nodejs](https://nodejs.org/en/download/) and [Truffle](https://www.trufflesuite.com/truffle) if using the DAp
+- [Nodejs](https://nodejs.org/en/download/) and [Truffle](https://www.trufflesuite.com/truffle) if using the DApp
 
 
 ## Description
@@ -105,6 +105,17 @@ Use this scenario:
 
 ![Image basic_orion_elk](./images/quickstart-poa-orion-elk.png)
 
+
+#### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and 2 extra nodes for on chain permissioning
+This example showcases on chain permissioning by deploying come [smart contracts](https://github.com/PegaSysEng/permissioning-smart-contracts)
+Use this scenario:
+- if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
+
+![Image basic_elk](./images/quickstart-poa-permissioning.png)
+
+
+`./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
+`./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
 
 
 ### Stop Services and Network

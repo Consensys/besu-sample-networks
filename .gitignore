@@ -10,3 +10,5 @@
 logs/
 /volumes/
 .DS_Store
+permissioning-smart-contracts/
+/config/besu/networkFiles/node1/data/
