@@ -50,8 +50,8 @@ while getopts "hep:c:" o; do
       algo=${OPTARG}
       case "${algo}" in
         ibft2|clique)
-          export QUICKSTART_POA_API="${!algo}"
-          export QUICKSTART_VERSION="${BESU_VERSION}-${algo}"
+          export SAMPLE_POA_API="${!algo}"
+          export SAMPLE_VERSION="${BESU_VERSION}-${algo}"
           composeFile="${composeFile}_poa"
           ;;
         ethash)
@@ -75,10 +75,10 @@ composeFile="-f ${composeFile}.yml"
 
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
-echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
+echo "${SAMPLE_VERSION}" >> ${LOCK_FILE}
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${QUICKSTART_VERSION}"
+echo "Besu Quickstart ${SAMPLE_VERSION}"
 echo "*************************************${normal}"
 echo "Start network"
 echo "--------------------"
@@ -89,7 +89,7 @@ docker-compose ${composeFile} up -d
 #list services and endpoints
 ./list.sh
 
-if [[ "${QUICKSTART_POA_API:-}" == "${ibft2}" ]]; then
+if [[ "${SAMPLE_POA_API:-}" == "${ibft2}" ]]; then
   echo "IBFT 2 Validator Addresses:"
   echo "----------------------------------"
   HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
