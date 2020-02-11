@@ -37,7 +37,7 @@ services:
       context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -50,7 +50,7 @@ services:
       - ./logs/besu:/var/log/
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -70,7 +70,7 @@ services:
       - 8545:8545/tcp
 
   minernode:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -88,7 +88,7 @@ services:
       - bootnode
 
   node1:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -116,7 +116,7 @@ services:
       - 20001:8546/tcp
 
   node2:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -144,7 +144,7 @@ services:
       - 20003:8546/tcp
 
   node3:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -173,7 +173,7 @@ services:
 
   explorer:
     build: block-explorer-light/.
-    image: "quickstart/block-explorer-light:${BESU_VERSION}"
+    image: "sample-network/block-explorer-light:${BESU_VERSION}"
     depends_on:
       - rpcnode
     ports:

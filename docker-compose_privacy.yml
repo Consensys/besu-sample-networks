@@ -25,7 +25,7 @@ services:
       context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     entrypoint: /opt/besu/bootnode_start.sh --network=dev --config-file=/config/config.toml --min-gas-price=0
@@ -34,7 +34,7 @@ services:
       - ./config/besu/config.toml:/config/config.toml
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: [
@@ -51,7 +51,7 @@ services:
       - 8545:8545/tcp
 
   minernode:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: [
@@ -66,7 +66,7 @@ services:
       - bootnode
 
   node1:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: [
@@ -91,7 +91,7 @@ services:
       - 20001:8546/tcp
 
   node2:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: [
@@ -116,7 +116,7 @@ services:
       - 20003:8546/tcp
 
   node3:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: [
@@ -142,7 +142,7 @@ services:
 
   explorer:
     build: block-explorer-light/.
-    image: "quickstart/block-explorer-light:${BESU_VERSION}"
+    image: "sample-network/block-explorer-light:${BESU_VERSION}"
     depends_on:
       - rpcnode
     ports:

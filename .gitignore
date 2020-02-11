@@ -11,4 +11,7 @@ logs/
 /volumes/
 .DS_Store
 permissioning-smart-contracts/
-/config/besu/networkFiles/node1/data/
+/config/besu/networkFiles/node*/data/
+/config/besu/networkFiles/rpcnode/data/
+/config/besu/networkFiles/bootnode/data/
+config/besu/ibft2GenesisPermissioning.json

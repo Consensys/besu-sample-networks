@@ -30,7 +30,7 @@ displayUsage()
 
 # options values and api values are not necessarily identical.
 # value to use for ibft2 option as required for Besu --rpc-http-api and --rpc-ws-api
-# we want to explicitely display IBFT2 in the quickstart options to prevent people from
+# we want to explicitely display IBFT2 in the sample network options to prevent people from
 # being confused with previous version IBFT, however the RPC API remains commons, so the name
 # that's the reason of this not obvious mapping.
 # variables names must be similar to the option -c|--consensus values to map.
@@ -71,10 +71,10 @@ sed -i "s/ACCOUNT_INGRESS_CODE/$account_ingress_code/g" config/besu/ibft2Genesis
 
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
-echo "${QUICKSTART_VERSION}" >> ${LOCK_FILE}
+echo "${SAMPLE_VERSION}" >> ${LOCK_FILE}
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${QUICKSTART_VERSION}"
+echo "Sample Network for Besu at ${SAMPLE_VERSION}"
 echo "*************************************${normal}"
 echo "Start network"
 echo "--------------------"
@@ -85,7 +85,7 @@ docker-compose ${composeFile} up -d
 #list services and endpoints
 ./list.sh
 
-if [[ "${QUICKSTART_POA_API:-}" == "${ibft2}" ]]; then
+if [[ "${SAMPLE_POA_API:-}" == "${ibft2}" ]]; then
   echo "IBFT 2 Validator Addresses:"
   echo "----------------------------------"
   HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}

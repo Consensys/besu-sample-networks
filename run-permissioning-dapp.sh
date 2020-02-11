@@ -65,11 +65,11 @@ mv build/ ../permissioning-dapp/
 # 2. Nodes can participate in the network
 # 3. Admins are accounts that can update the accounts and nodes whitelists
 cd ../permissioning-dapp
-docker build . -t besu-quickstart_permissioning_dapp
+docker build . -t besu-sample-network_permissioning_dapp
 docker run -p 3001:80 -e BESU_NODE_PERM_ACCOUNT="0x627306090abaB3A6e1400e9345bC60c78a8BEf57" \
                       -e BESU_NODE_PERM_KEY="0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3" \
                       -e BESU_NODE_PERM_ENDPOINT="http://localhost:8545" \
-                      -e NODE_ENV=development --name besu-quickstart_permissioning_dapp --detach besu-quickstart_permissioning_dapp
+                      -e NODE_ENV=development --name besu-sample-network_permissioning_dapp --detach besu-sample-network_permissioning_dapp
 cd ..
 sleep 30
 

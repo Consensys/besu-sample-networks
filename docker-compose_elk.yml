@@ -7,7 +7,7 @@ services:
       context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -22,7 +22,7 @@ services:
       - 30303:30303/udp
 
   minernode:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -40,7 +40,7 @@ services:
       - bootnode
 
   node:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -56,7 +56,7 @@ services:
       - bootnode
 
   rpcnode:
-    image: quickstart/besu:${BESU_VERSION}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
@@ -75,7 +75,7 @@ services:
 
   explorer:
     build: block-explorer-light/.
-    image: "quickstart/block-explorer-light:${BESU_VERSION}"
+    image: "sample-network/block-explorer-light:${BESU_VERSION}"
     depends_on:
       - rpcnode
     ports:

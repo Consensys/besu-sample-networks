@@ -16,7 +16,7 @@ module.exports = {
     develop: {
       port: 8545
     },
-    quickstartWallet: {
+    sampleNetworkWallet: {
       provider: () => new PrivateKeyProvider(privateKey, "http://localhost:8545"),
       network_id: "*"
     }

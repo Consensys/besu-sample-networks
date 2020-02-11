@@ -1,4 +1,4 @@
-# Quickstart
+# Sample Networks
 
 ## Prerequisites
 
@@ -6,7 +6,10 @@ To run these tutorials, you must have the following installed:
 
 - [Docker and Docker-compose](https://docs.docker.com/compose/install/)
 
-| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading |
+| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
+| ---                                                                                                                                                                                                                                                                                                                                                                                |
+
+
 | ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2                                                                                                                                                                                                                                                                                              |
 | ---                                                                                                                                                                                                                                                                                                                                                                                |
 
@@ -20,7 +23,7 @@ To run these tutorials, you must have the following installed:
 There are multiple examples in this repo, and each has a POW and POA example. You can choose the default setup which comprises a 4 node network with the Block Explorer and our Prometheus & Grafana dashboard to track the progress of the chain; or the whole setup with logging via ELK.   
 Please use the following use cases personas as guidelines only: 
 
-All our quickstart documentation can be found on the [Besu documentation site](https://besu.hyperledger.org/Tutorials/Quickstarts/Private-Network-Quickstart/).
+All our documentation can be found on the [Besu documentation site](https://besu.hyperledger.org/Tutorials/Examples/Private-Network-Example/).
 
 All the architecture diagrams below generally use the POA (IBFT2) setup, to view the architecture diagrams for the POW (ethash) setup please see the `images` folder, where the files share the same name but have different suffixes. 
 
@@ -37,7 +40,7 @@ There is an optional `-e` parameter which provides centralised logging functiona
 Use this scenario:
  - if you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs 
  
-![Image basic](./images/quickstart-poa.png)
+![Image basic](./images/sampleNetworks-poa.png)
 
 #### Use our sample smart contract and DApp (with Metamask) with any of the examples below.
 - Install [metamask](https://metamask.io/) as an extension in your browser
@@ -47,7 +50,7 @@ NOTE: Once you have adopted a pet, you can also go to the block explorer and sea
 
 Behind the scenes, this has used a smart contract that is compiled and then deployed (via a migration) to our test network. The source code for the smart contract and the DApp can be found in the folder `pet-shop`
 
-![Image dapp](./images/quickstart-dapp.png)
+![Image dapp](./images/sampleNetworks-dapp.png)
 
 #### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and logs via ELK
 This is the same as the previous example but also has ELK in it for the logs
@@ -55,14 +58,14 @@ Use this scenario:
 - if you are a DevOps engineer or administrator looking to see how the full blockchain works with logging and metrics
 - if you are a DApp developer and looking to build on the previous example with the ability to see transaction logs via ELK 
 
-![Image basic_elk](./images/quickstart-poa-elk.png)
+![Image basic_elk](./images/sampleNetworks-poa-elk.png)
 
 
 #### Basic 4 Node Network with Privacy (Orion) node sets, the Block Explorer and Prometheus & Grafana 
 Use this scenario:
 - if you are a user looking to execute private transactions at least one other party
 
-![Image basic_orion](./images/quickstart-poa-orion.png)
+![Image basic_orion](./images/sampleNetworks-poa-orion.png)
  
 `./run-privacy.sh` starts all the docker containers in POW mode, and also has 3 Orion nodes for privacy 
  
@@ -103,19 +106,27 @@ Use this scenario:
 - if you are a user looking to execute private transactions at least one other party
 - if you are a developer and looking to build on the previous example with the ability to see transaction logs via ELK 
 
-![Image basic_orion_elk](./images/quickstart-poa-orion-elk.png)
+![Image basic_orion_elk](./images/sampleNetworks-poa-orion-elk.png)
 
 
 #### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and 2 extra nodes for on chain permissioning
 This example showcases on chain permissioning by deploying come [smart contracts](https://github.com/PegaSysEng/permissioning-smart-contracts)
+
+| ⚠️ **Note**: This scenario will not work on Windows because it requires volume mounts for the Besu nodes data directory. The containers  use a linux filesystem which are incompatible with the Windows filesystem        |
+| ---                                                                                                                                                                                                                                                                                                                                                                                |
+
 Use this scenario:
 - if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
 
-![Image basic_elk](./images/quickstart-poa-permissioning.png)
+
+
+![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
 
 
 `./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
 `./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
+
+There is an optional `-e` parameter which provides centralised logging functionality via ELK for *both* commands above
 
 
 ### Stop Services and Network

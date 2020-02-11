@@ -25,7 +25,7 @@
         context: besu/.
         args:
           BESU_VERSION: ${BESU_VERSION}
-      image: quickstart/besu:${BESU_VERSION}
+      image: sample-network/besu:${BESU_VERSION}
       environment:
         - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       entrypoint: /opt/besu/bootnode_start.sh
@@ -33,28 +33,28 @@
         "--config-file=/config/config.toml",
         "--genesis-file=/config/genesis.json",
         "--node-private-key-file=/opt/besu/keys/key",
-        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
-        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}" ]
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}" ]
       volumes:
         - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
         - ./config/besu/config.toml:/config/config.toml
-        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
 
     rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
-      image: quickstart/besu:${BESU_VERSION}
+      image: sample-network/besu:${BESU_VERSION}
       environment:
         - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       command: [
         "--config-file=/config/config.toml",
         "--genesis-file=/config/genesis.json",
         "--node-private-key-file=/opt/besu/keys/key",
-        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
-        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}" ]
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}" ]
       volumes:
         - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
         - ./config/besu/config.toml:/config/config.toml
-        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
       depends_on:
         - bootnode
@@ -62,15 +62,15 @@
         - 8545:8545/tcp
 
     node1:
-      image: quickstart/besu:${BESU_VERSION}
+      image: sample-network/besu:${BESU_VERSION}
       environment:
         - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       command: [
         "--config-file=/config/config.toml",
         "--genesis-file=/config/genesis.json",
         "--node-private-key-file=/opt/besu/keys/key",
-        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
-        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
         "--min-gas-price=0",
         "--privacy-enabled=true",
         "--privacy-url=http://orion1:8888",
@@ -78,7 +78,7 @@
       volumes:
         - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
         - ./config/besu/config.toml:/config/config.toml
-        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
         - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
       depends_on:
@@ -89,15 +89,15 @@
         - 20001:8546/tcp
 
     node2:
-      image: quickstart/besu:${BESU_VERSION}
+      image: sample-network/besu:${BESU_VERSION}
       environment:
         - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       command: [
         "--config-file=/config/config.toml",
         "--genesis-file=/config/genesis.json",
         "--node-private-key-file=/opt/besu/keys/key",
-        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
-        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
         "--min-gas-price=0",
         "--privacy-enabled=true",
         "--privacy-url=http://orion2:8888",
@@ -105,7 +105,7 @@
       volumes:
         - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
         - ./config/besu/config.toml:/config/config.toml
-        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
         - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
       depends_on:
@@ -116,15 +116,15 @@
         - 20003:8546/tcp
 
     node3:
-      image: quickstart/besu:${BESU_VERSION}
+      image: sample-network/besu:${BESU_VERSION}
       environment:
         - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       command: [
         "--config-file=/config/config.toml",
         "--genesis-file=/config/genesis.json",
         "--node-private-key-file=/opt/besu/keys/key",
-        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
-        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${QUICKSTART_POA_API-ibft}",
+        "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+        "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
         "--min-gas-price=0",
         "--privacy-enabled=true",
         "--privacy-url=http://orion3:8888",
@@ -132,7 +132,7 @@
       volumes:
         - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
         - ./config/besu/config.toml:/config/config.toml
-        - ./config/besu/${QUICKSTART_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+        - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
         - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
         - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
       depends_on:
@@ -144,7 +144,7 @@
 
     explorer:
       build: block-explorer-light/.
-      image: quickstart/block-explorer-light:${BESU_VERSION}-${QUICKSTART_POA_NAME-ibft2}
+      image: sample-network/block-explorer-light:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
       depends_on:
         - rpcnode
       ports:
