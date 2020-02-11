@@ -28,17 +28,17 @@ echo "*************************************${normal}"
 echo "Stop and remove network..."
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
-if [[ ! -z `docker ps -a | grep besu-quickstart_pet_shop` ]]; then
-  docker stop besu-quickstart_pet_shop
-  docker rm besu-quickstart_pet_shop
-  removeDockerImage besu-quickstart_pet_shop
+if [[ ! -z `docker ps -a | grep besu-sample-network_pet_shop` ]]; then
+  docker stop besu-sample-network_pet_shop
+  docker rm besu-sample-network_pet_shop
+  removeDockerImage besu-sample-network_pet_shop
 fi
 
 
-docker image rm quickstart/besu:${version}
-docker image rm quickstart/block-explorer-light:${version}
-removeDockerImage besu-quickstart_filebeat
-removeDockerImage besu-quickstart_logstash
-removeDockerImage besu-quickstart_elasticsearch
+docker image rm sample-network/besu:${version}
+docker image rm sample-network/block-explorer-light:${version}
+removeDockerImage besu-sample-network_filebeat
+removeDockerImage besu-sample-network_logstash
+removeDockerImage besu-sample-network_elasticsearch
 rm ${LOCK_FILE}
 echo "Lock file ${LOCK_FILE} removed"
