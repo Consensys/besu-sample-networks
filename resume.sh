@@ -18,7 +18,7 @@ NO_LOCK_REQUIRED=false
 
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${version}"
+echo "Sample Network for Besu at ${version}"
 echo "*************************************${normal}"
 echo "Resuming network..."
 echo "----------------------------------"

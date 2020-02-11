@@ -17,12 +17,12 @@ NO_LOCK_REQUIRED=false
 . ./.common.sh
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${version}"
+echo "Sample Network for Besu at ${version}"
 echo "*************************************${normal}"
 echo "Stopping network"
 echo "----------------------------------"
 
 docker-compose ${composeFile} stop
-if [[ ! -z `docker ps -a | grep besu-quickstart_pet_shop` ]]; then
-  docker stop besu-quickstart_pet_shop
+if [[ ! -z `docker ps -a | grep besu-sample-network_pet_shop` ]]; then
+  docker stop besu-sample-network_pet_shop
 fi

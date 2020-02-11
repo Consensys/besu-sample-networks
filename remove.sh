@@ -23,7 +23,7 @@ removeDockerImage(){
 }
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${version}"
+echo "Sample Network for Besu at ${version}"
 echo "*************************************${normal}"
 echo "Stop and remove network..."
 docker-compose ${composeFile} down -v

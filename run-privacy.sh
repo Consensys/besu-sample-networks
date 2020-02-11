@@ -32,7 +32,7 @@ displayUsage()
 
 # options values and api values are not necessarily identical.
 # value to use for ibft2 option as required for Besu --rpc-http-api and --rpc-ws-api
-# we want to explicitely display IBFT2 in the quickstart options to prevent people from
+# we want to explicitely display IBFT2 in the options to prevent people from
 # being confused with previous version IBFT, however the RPC API remains commons, so the name
 # that's the reason of this not obvious mapping.
 # variables names must be similar to the option -c|--consensus values to map.
@@ -78,7 +78,7 @@ echo "${composeFile}" > ${LOCK_FILE}
 echo "${SAMPLE_VERSION}" >> ${LOCK_FILE}
 
 echo "${bold}*************************************"
-echo "Besu Quickstart ${SAMPLE_VERSION}"
+echo "Sample Network for Besu at ${SAMPLE_VERSION}"
 echo "*************************************${normal}"
 echo "Start network"
 echo "--------------------"
