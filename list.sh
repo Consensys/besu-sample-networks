@@ -20,7 +20,7 @@ HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
 
 # Displays links to exposed services
 echo "${bold}*************************************"
-echo "Besu Quickstart ${version}"
+echo "Sample Network for Besu at ${version}"
 echo "*************************************${normal}"
 echo "List endpoints and services"
 echo "----------------------------------"
