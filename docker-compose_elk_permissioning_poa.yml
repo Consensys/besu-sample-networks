@@ -12,10 +12,11 @@ services:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh
-    command: [
+    command: &base_options [
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
+      "--min-gas-price=0",
       "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
       "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
       "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
@@ -30,27 +31,77 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/bootnode/data:/opt/besu/data
+      - bootnode:/opt/besu/data
     networks:
       sample:
         ipv4_address: 172.24.2.5
+
+  validator2:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./logs/besu:/var/log/
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+      - validator2:/opt/besu/data
+    depends_on:
+      - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.24.2.6
+
+  validator3:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./logs/besu:/var/log/
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+      - validator3:/opt/besu/data
+    depends_on:
+      - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.24.2.7
+
+  validator4:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./logs/besu:/var/log/
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+      - validator4:/opt/besu/data
+    depends_on:
+      - bootnode
+    networks:
+      sample:
+        ipv4_address: 172.24.2.8
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888",
-      "--permissions-nodes-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999",
-    ]
+    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -58,91 +109,22 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/rpcnode/data:/opt/besu/data
+      - rpcnode:/opt/besu/data
     depends_on:
       - bootnode
     ports:
       - 8545:8545/tcp
     networks:
       sample:
-        ipv4_address: 172.24.2.6
+        ipv4_address: 172.24.2.9
 
-  nodev3:
-    image: sample-network/besu:${BESU_VERSION}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888",
-      "--permissions-nodes-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999",
-    ]
-    volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
-      - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/node4/data:/opt/besu/data
-    depends_on:
-      - bootnode
-    networks:
-      sample:
-        ipv4_address: 172.24.2.7
-
-  nodev4:
-    image: sample-network/besu:${BESU_VERSION}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888",
-      "--permissions-nodes-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999",
-    ]
-    volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
-      - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/node5/data:/opt/besu/data
-    depends_on:
-      - bootnode
-    networks:
-      sample:
-        ipv4_address: 172.24.2.8
 
   node1:
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888",
-      "--permissions-nodes-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999",
-    ]
+    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -150,7 +132,7 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/node1/data:/opt/besu/data
+      - node1:/opt/besu/data
     depends_on:
       - bootnode
     networks:
@@ -162,17 +144,7 @@ services:
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--rpc-ws-api=WEB3,ETH,NET,IBFT,ADMIN,PERM",
-      "--permissions-accounts-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-accounts-contract-address=0x0000000000000000000000000000000000008888",
-      "--permissions-nodes-contract-enabled=${PERMISSIONING_ENABLED}",
-      "--permissions-nodes-contract-address=0x0000000000000000000000000000000000009999",
-    ]
+    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -180,7 +152,7 @@ services:
       - ./config/besu/log-config.xml:/config/log-config.xml
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
-      - ./config/besu/networkFiles/node2/data:/opt/besu/data
+      - node2:/opt/besu/data
     depends_on:
       - bootnode
     networks:
@@ -306,6 +278,15 @@ volumes:
   prometheus:
 
   grafana:
+
+  bootnode:
+  validator1:
+  validator2:
+  validator3:
+  validator4:
+  rpcnode:
+  node1:
+  node2:
 
 networks:
   sample:

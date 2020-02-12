@@ -112,20 +112,25 @@ Use this scenario:
 #### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and 2 extra nodes for on chain permissioning
 This example showcases on chain permissioning by deploying come [smart contracts](https://github.com/PegaSysEng/permissioning-smart-contracts)
 
-| ⚠️ **Note**: This scenario will not work on Windows because it requires volume mounts for the Besu nodes data directory. The containers  use a linux filesystem which are incompatible with the Windows filesystem        |
-| ---                                                                                                                                                                                                                                                                                                                                                                                |
-
 Use this scenario:
 - if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
 
-
+###### Prerequisites
+ - [Nodejs](https://nodejs.org/en/download/)
+ - [Yarn](https://www.npmjs.com/package/yarn)
+ - [JQ](https://stedolan.github.io/jq/)
+ - Install [metamask](https://metamask.io/) as an extension in your browser
+ - Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' for the following private keys:
+    - `0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
+    - `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
+    - `0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f`
 
 ![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
 
-
 `./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
 `./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
-
+Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp 
+ 
 There is an optional `-e` parameter which provides centralised logging functionality via ELK for *both* commands above
 
 

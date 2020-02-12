@@ -46,8 +46,9 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}" ]
+      "--min-gas-price=0",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}" ]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -56,16 +57,56 @@ services:
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
       - ./logs/besu:/var/log/
 
+  validator2:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
+  validator3:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
+  validator4:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-    command: [
-      "--config-file=/config/config.toml",
-      "--genesis-file=/config/genesis.json",
-      "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}" ]
+    command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -86,10 +127,10 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--privacy-enabled",
       "--privacy-url=http://orion1:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -115,10 +156,10 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--privacy-enabled",
       "--privacy-url=http://orion2:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -144,10 +185,10 @@ services:
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--privacy-enabled",
       "--privacy-url=http://orion3:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:

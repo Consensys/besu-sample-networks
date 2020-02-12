@@ -29,24 +29,12 @@ echo "Stop and remove network..."
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
 
-if [[ ! -z `docker ps -a | grep besu-sample-network_permissioning_dapp` ]]; then
-  docker stop besu-network_permissioning_dapp
-  docker rm besu-network_permissioning_dapp
-  removeDockerImage besu-network_permissioning_dapp
-fi
 
-if [[ ! -z `docker ps -a | grep besu-sample-network_pet_shop` ]]; then
-  docker stop besu-sample-network_pet_shop
-  docker rm besu-sample-network_pet_shop
-  removeDockerImage besu-sample-network_pet_shop
-fi
-
-rm -rf permissioning-dapp/build
-rm -rf permissioning-smart-contracts
 
 docker image rm sample-network/besu:${version}
 docker image rm sample-network/block-explorer-light:${version}
-#elk
+
+# elk
 if [[ ! -z `docker ps -a | grep besu-sample-network_filebeat` ]]; then
   removeDockerImage besu-sample-network_filebeat
 fi
@@ -57,16 +45,22 @@ if [[ ! -z `docker ps -a | grep besu-sample-network_elasticsearch` ]]; then
   removeDockerImage besu-sample-network_elasticsearch
 fi
 
+# pet shop dapp
+if [[ ! -z `docker ps -a | grep besu-sample-network_pet_shop` ]]; then
+  docker stop besu-sample-network_pet_shop
+  docker rm besu-sample-network_pet_shop
+  removeDockerImage besu-sample-network_pet_shop
+fi
+
+# clean up permissioning
+if [[ ! -z `docker ps -a | grep besu-sample-network_permissioning_dapp` ]]; then
+  docker stop besu-sample-network_permissioning_dapp
+  docker rm besu-sample-network_permissioning_dapp
+  removeDockerImage besu-sample-network_permissioning_dapp
+fi
+rm -rf permissioning-dapp/build
+rm -rf permissioning-smart-contracts
+rm -f config/besu/ibft2GenesisPermissioning.json
+
 rm ${LOCK_FILE}
 echo "Lock file ${LOCK_FILE} removed"
-
-# clean up permissioning data volumes if present
-rm -f config/besu/ibft2GenesisPermissioning.json
-if [[ -d config/besu/networkFiles/bootnode/data/database ]]; then
-  #cleanup old data mounts
-  folders=(bootnode rpcnode node1 node2 node3 node4 node5)
-  for i in "${folders[@]}"
-  do
-    sudo rm -rf config/besu/networkFiles/$i/data/*
-  done
-fi
