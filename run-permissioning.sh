@@ -60,6 +60,13 @@ if [[ ! -d permissioning-smart-contracts ]]; then
   git clone https://github.com/PegaSysEng/permissioning-smart-contracts
 fi
 cd permissioning-smart-contracts
+
+if [ $? -eq 1 ]
+then
+   echo "Error: Could not checkout repo PegaSysEng/permissioning-smart-contracts. Unable to proceed"
+   exit 1
+fi
+
 git pull
 yarn install
 yarn run build
