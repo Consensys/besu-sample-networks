@@ -11,6 +11,7 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+set -e
 NO_LOCK_REQUIRED=true
 
 . ./.env
@@ -55,14 +56,17 @@ done
 composeFile="-f ${composeFile}.yml"
 
 echo "Checkout smart contracts and compile to get deployedByteCode to put into genesis file"
-git clone https://github.com/PegaSysEng/permissioning-smart-contracts
+if [[ ! -d permissioning-smart-contracts ]]; then
+  git clone https://github.com/PegaSysEng/permissioning-smart-contracts
+fi
 cd permissioning-smart-contracts
+git pull
 yarn install
 yarn run build
 cd ..
 
 # compile the code and set it in the genesis file
-rm config/besu/ibft2GenesisPermissioning.json
+rm -f config/besu/ibft2GenesisPermissioning.json
 cp config/besu/ibft2GenesisPermissioning.json.template config/besu/ibft2GenesisPermissioning.json
 node_ingress_code=`cat permissioning-smart-contracts/src/chain/abis/NodeIngress.json | jq '.["deployedBytecode"]'`
 account_ingress_code=`cat permissioning-smart-contracts/src/chain/abis/AccountIngress.json | jq '.["deployedBytecode"]'`
