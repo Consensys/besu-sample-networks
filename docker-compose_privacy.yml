@@ -4,128 +4,86 @@ services:
 
   orion1:
     image: "pegasyseng/orion:develop"
-    environment:
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion1:/config/orion/
-      - ./logs/orion:/var/log/
 
   orion2:
     image: "pegasyseng/orion:develop"
-    environment:
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion2:/config/orion/
-      - ./logs/orion:/var/log/
 
   orion3:
     image: "pegasyseng/orion:develop"
-    environment:
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion3:/config/orion/
-      - ./logs/orion:/var/log/
 
   bootnode:
     build:
       context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    entrypoint: /opt/besu/bootnode_start.sh --network=dev --min-gas-price=0 --host-whitelist=* --metrics-enabled --metrics-host=0.0.0.0 --metrics-port=9545
+    entrypoint: /opt/besu/bootnode_start.sh --config-file=/config/config.toml --network=dev --min-gas-price=0
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--network=dev",
-      "--rpc-http-enabled",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
-      "--rpc-ws-enabled",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--host-whitelist=*",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--min-gas-price=0"]
+      "--min-gas-price=0",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV" ]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     depends_on:
       - bootnode
     ports:
       - 8545:8545/tcp
 
   minernode:
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--network=dev",
-      "--miner-enabled",
-      "--miner-coinbase=${MINER_COINBASE}",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--min-gas-price=0"]
+      "--min-gas-price=0",
+      "--miner-enabled=true",
+      "--miner-coinbase=${MINER_COINBASE}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./logs/besu:/var/log/
+      - ./config/besu/config.toml:/config/config.toml
     depends_on:
       - bootnode
 
   node1:
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--node-private-key-file=/opt/besu/keys/key",
       "--network=dev",
-      "--rpc-http-enabled",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
-      "--rpc-ws-enabled",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--host-whitelist=*",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
+      "--privacy-enabled",
       "--privacy-url=http://orion1:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/config.toml:/config/config.toml
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion1
@@ -134,35 +92,23 @@ services:
       - 20001:8546/tcp
 
   node2:
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--node-private-key-file=/opt/besu/keys/key",
       "--network=dev",
-      "--rpc-http-enabled",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
-      "--rpc-ws-enabled",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--host-whitelist=*",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
+      "--privacy-enabled",
       "--privacy-url=http://orion2:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/config.toml:/config/config.toml
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion2
@@ -171,35 +117,23 @@ services:
       - 20003:8546/tcp
 
   node3:
-    image: sample-network/besu:${BESU_VERSION}-privacy
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
+      "--config-file=/config/config.toml",
       "--node-private-key-file=/opt/besu/keys/key",
       "--network=dev",
-      "--rpc-http-enabled",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
-      "--rpc-ws-enabled",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--host-whitelist=*",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
       "--min-gas-price=0",
-      "--privacy-enabled=true",
+      "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
+      "--privacy-enabled",
       "--privacy-url=http://orion3:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/config.toml:/config/config.toml
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion3
@@ -209,7 +143,7 @@ services:
 
   explorer:
     build: block-explorer-light/.
-    image: "sample-network/block-explorer-light:${BESU_VERSION}"
+    image: sample-network/block-explorer-light:${BESU_VERSION}
     depends_on:
       - rpcnode
     ports:

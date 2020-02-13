@@ -27,6 +27,30 @@ scrape_configs:
       static_configs:
         - targets: [ bootnode:9545 ]
 
+    - job_name: validator2
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ validator2:9545 ]
+
+    - job_name: validator3
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ validator3:9545 ]
+
+    - job_name: validator4
+      scrape_interval: 15s
+      scrape_timeout: 10s
+      metrics_path: /metrics
+      scheme: http
+      static_configs:
+        - targets: [ validator4:9545 ]
+
     - job_name: minernode
       scrape_interval: 15s
       scrape_timeout: 10s
@@ -67,29 +91,21 @@ scrape_configs:
       static_configs:
         - targets: [ node3:9545 ]
 
-    - job_name: nodev3
+    - job_name: node4
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ nodev3:9545 ]
+        - targets: [ node4:9545 ]
 
-    - job_name: nodev4
+    - job_name: node5
       scrape_interval: 15s
       scrape_timeout: 10s
       metrics_path: /metrics
       scheme: http
       static_configs:
-        - targets: [ nodev4:9545 ]
-
-    - job_name: nodev5
-      scrape_interval: 15s
-      scrape_timeout: 10s
-      metrics_path: /metrics
-      scheme: http
-      static_configs:
-        - targets: [ nodev5:9545 ]
+        - targets: [ node5:9545 ]
 
     # all the nodes override themselves if given the same name
     # so we use dns based lookup and, replace labels to

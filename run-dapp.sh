@@ -22,8 +22,8 @@ npm install
 
 # compile the contracts
 truffle compile
-truffle migrate --network quickstartWallet
-truffle test --network quickstartWallet
+truffle migrate --network sampleNetworkWallet
+truffle test --network sampleNetworkWallet
 
 docker build . -t besu-sample-network_pet_shop
 docker run -p 3001:3001 --name besu-sample-network_pet_shop --detach besu-sample-network_pet_shop

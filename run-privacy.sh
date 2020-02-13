@@ -41,7 +41,7 @@ clique='clique' # value to use for clique option
 
 composeFile="docker-compose_privacy"
 
-while getopts "hep:c:" o; do
+while getopts "hec:" o; do
   case "${o}" in
     h)
       displayUsage
@@ -51,7 +51,7 @@ while getopts "hep:c:" o; do
       case "${algo}" in
         ibft2|clique)
           export SAMPLE_POA_API="${!algo}"
-          export SAMPLE_VERSION="${BESU_VERSION}-${algo}"
+          export SAMPLE_VERSION="${BESU_VERSION}"
           composeFile="${composeFile}_poa"
           ;;
         ethash)
@@ -89,9 +89,3 @@ docker-compose ${composeFile} up -d
 #list services and endpoints
 ./list.sh
 
-if [[ "${SAMPLE_POA_API:-}" == "${ibft2}" ]]; then
-  echo "IBFT 2 Validator Addresses:"
-  echo "----------------------------------"
-  HOST=${DOCKER_PORT_2375_TCP_ADDR:-"localhost"}
-  echo `curl -s -X POST --data '{"jsonrpc":"2.0","method":"ibft_getValidatorsByBlockNumber","params":["latest"],"id":1}' http://${HOST}:8545 | grep 'result' `
-fi

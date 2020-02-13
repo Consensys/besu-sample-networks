@@ -6,13 +6,16 @@ To run these tutorials, you must have the following installed:
 
 - [Docker and Docker-compose](https://docs.docker.com/compose/install/)
 
-| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading |
+| ⚠️ **Note**: If on MacOS or Windows, please ensure that you allow docker to use upto 4G of memory or 6G if running Privacy examples under the _Resources_ section. The [Docker for Mac](https://docs.docker.com/docker-for-mac/) and [Docker Desktop](https://docs.docker.com/docker-for-windows/) sites have details on how to do this at the "Resources" heading       |
+| ---                                                                                                                                                                                                                                                                                                                                                                                |
+
+
 | ⚠️ **Note**: This has only been tested on Windows 10 Build 18362 and Docker >= 17.12.2                                                                                                                                                                                                                                                                                              |
 | ---                                                                                                                                                                                                                                                                                                                                                                                |
 
 - On Windows ensure that the drive that this repo is cloned onto is a "Shared Drive" with Docker Desktop
 - On Windows we recommend running all commands from GitBash
-- [Nodejs](https://nodejs.org/en/download/) and [Truffle](https://www.trufflesuite.com/truffle) if using the DAp
+- [Nodejs](https://nodejs.org/en/download/) and [Truffle](https://www.trufflesuite.com/truffle) if using the DApp
 
 
 ## Description
@@ -37,7 +40,7 @@ There is an optional `-e` parameter which provides centralised logging functiona
 Use this scenario:
  - if you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs 
  
-![Image basic](./images/quickstart-poa.png)
+![Image basic](./images/sampleNetworks-poa.png)
 
 #### Use our sample smart contract and DApp (with Metamask) with any of the examples below.
 - Install [metamask](https://metamask.io/) as an extension in your browser
@@ -47,7 +50,7 @@ NOTE: Once you have adopted a pet, you can also go to the block explorer and sea
 
 Behind the scenes, this has used a smart contract that is compiled and then deployed (via a migration) to our test network. The source code for the smart contract and the DApp can be found in the folder `pet-shop`
 
-![Image dapp](./images/quickstart-dapp.png)
+![Image dapp](./images/sampleNetworks-dapp.png)
 
 #### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and logs via ELK
 This is the same as the previous example but also has ELK in it for the logs
@@ -55,14 +58,14 @@ Use this scenario:
 - if you are a DevOps engineer or administrator looking to see how the full blockchain works with logging and metrics
 - if you are a DApp developer and looking to build on the previous example with the ability to see transaction logs via ELK 
 
-![Image basic_elk](./images/quickstart-poa-elk.png)
+![Image basic_elk](./images/sampleNetworks-poa-elk.png)
 
 
 #### Basic 4 Node Network with Privacy (Orion) node sets, the Block Explorer and Prometheus & Grafana 
 Use this scenario:
 - if you are a user looking to execute private transactions at least one other party
 
-![Image basic_orion](./images/quickstart-poa-orion.png)
+![Image basic_orion](./images/sampleNetworks-poa-orion.png)
  
 `./run-privacy.sh` starts all the docker containers in POW mode, and also has 3 Orion nodes for privacy 
  
@@ -103,8 +106,32 @@ Use this scenario:
 - if you are a user looking to execute private transactions at least one other party
 - if you are a developer and looking to build on the previous example with the ability to see transaction logs via ELK 
 
-![Image basic_orion_elk](./images/quickstart-poa-orion-elk.png)
+![Image basic_orion_elk](./images/sampleNetworks-poa-orion-elk.png)
 
+
+#### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and 2 extra nodes for on chain permissioning
+This example showcases on chain permissioning by deploying come [smart contracts](https://github.com/PegaSysEng/permissioning-smart-contracts)
+
+Use this scenario:
+- if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
+
+###### Prerequisites
+ - [Nodejs](https://nodejs.org/en/download/)
+ - [Yarn](https://www.npmjs.com/package/yarn)
+ - [JQ](https://stedolan.github.io/jq/)
+ - Install [metamask](https://metamask.io/) as an extension in your browser
+ - Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' for the following private keys:
+    - `0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63`
+    - `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
+    - `0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f`
+
+![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
+
+`./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
+`./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
+Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp 
+ 
+There is an optional `-e` parameter which provides centralised logging functionality via ELK for *both* commands above
 
 
 ### Stop Services and Network

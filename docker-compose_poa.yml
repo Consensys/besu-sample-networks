@@ -7,86 +7,79 @@ services:
       context: besu/.
       args:
         BESU_VERSION: ${BESU_VERSION}
-    image: sample-network/besu:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh
     command: &base_options [
-      "--data-path=/opt/besu/data",
+      "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
       "--node-private-key-file=/opt/besu/keys/key",
-      "--rpc-http-enabled",
       "--rpc-http-api=WEB3,ETH,NET,EEA,ADMIN,${SAMPLE_POA_API-ibft}",
-      "--rpc-http-host=0.0.0.0",
-      "--rpc-http-port=8545",
-      "--rpc-http-cors-origins=*",
-      "--rpc-ws-enabled",
-      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-host=0.0.0.0",
-      "--rpc-ws-port=8546",
-      "--graphql-http-enabled",
-      "--graphql-http-host=0.0.0.0",
-      "--graphql-http-port=8547",
-      "--graphql-http-cors-origins=*",
-      "--metrics-enabled",
-      "--metrics-host=0.0.0.0",
-      "--metrics-port=9545",
-      "--host-whitelist=*"]
+      "--rpc-ws-api=WEB3,ETH,NET,EEA,ADMIN,${SAMPLE_POA_API-ibft}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
 
-  rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
-    image: sample-network/besu:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
+  validator2:
+    image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
     command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
+  validator3:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
+  validator4:
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
+    depends_on:
+      - bootnode
+
+  rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
+    image: sample-network/besu:${BESU_VERSION}
+    environment:
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+    command: *base_options
+    volumes:
+      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
+      - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
     ports:
       - 8545:8545/tcp
 
-  nodev3:
-    image: sample-network/besu:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-    command: *base_options
-    volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
-    depends_on:
-      - bootnode
-
-  nodev4:
-    image: sample-network/besu:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
-    environment:
-      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
-    command: *base_options
-    volumes:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
-    depends_on:
-      - bootnode
-
   explorer:
     build: block-explorer-light/.
-    image: sample-network/block-explorer-light:${BESU_VERSION}-${SAMPLE_POA_NAME-ibft2}
+    image: sample-network/block-explorer-light:${BESU_VERSION}
     depends_on:
       - rpcnode
     ports:
