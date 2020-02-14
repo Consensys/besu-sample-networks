@@ -86,9 +86,6 @@ else
   sed -i "s/ACCOUNT_INGRESS_CODE/$account_ingress_code/g" config/besu/ibft2GenesisPermissioning.json
 fi
 
-sed -i "s/NODE_INGRESS_CODE/$node_ingress_code/g" config/besu/ibft2GenesisPermissioning.json
-sed -i "s/ACCOUNT_INGRESS_CODE/$account_ingress_code/g" config/besu/ibft2GenesisPermissioning.json
-
 # Build and run containers and network
 echo "${composeFile}" > ${LOCK_FILE}
 echo "${SAMPLE_VERSION}" >> ${LOCK_FILE}
