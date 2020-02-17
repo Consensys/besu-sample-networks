@@ -1,5 +1,5 @@
 ---
-version: '3.4'
+version: '2.4'
 services:
 
   orion1:
@@ -11,6 +11,7 @@ services:
       - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion1:/config/orion/
       - ./logs/orion:/var/log/
+    mem_limit: 1024m
 
   orion2:
     image: "pegasyseng/orion:develop"
@@ -21,6 +22,7 @@ services:
       - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion2:/config/orion/
       - ./logs/orion:/var/log/
+    mem_limit: 1024m
 
   orion3:
     image: "pegasyseng/orion:develop"
@@ -31,6 +33,7 @@ services:
       - ./config/orion/log-config.xml:/config/log-config.xml
       - ./config/orion/networkFiles/orion3:/config/orion/
       - ./logs/orion:/var/log/
+    mem_limit: 1024m
 
   bootnode:
     build:
@@ -53,9 +56,10 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
+    mem_limit: 2048m
 
   validator2:
     image: sample-network/besu:${BESU_VERSION}
@@ -67,10 +71,12 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    mem_limit: 2048m
 
   validator3:
     image: sample-network/besu:${BESU_VERSION}
@@ -82,10 +88,12 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    mem_limit: 2048m
 
   validator4:
     image: sample-network/besu:${BESU_VERSION}
@@ -97,32 +105,37 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
     depends_on:
       - bootnode
+    mem_limit: 2048m
 
   rpcnode: #  We keep one node named rpcnode to have a specific node to connect the explorer
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: *base_options
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
     ports:
       - 8545:8545/tcp
+    mem_limit: 2048m
 
   node1:
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
@@ -137,9 +150,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
       - ./logs/besu:/var/log/
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
     depends_on:
       - bootnode
@@ -147,11 +160,13 @@ services:
     ports:
       - 20000:8545/tcp
       - 20001:8546/tcp
+    mem_limit: 2048m
 
   node2:
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
@@ -166,9 +181,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node4/keys:/opt/besu/keys
       - ./logs/besu:/var/log/
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
     depends_on:
       - bootnode
@@ -176,11 +191,13 @@ services:
     ports:
       - 20002:8545/tcp
       - 20003:8546/tcp
+    mem_limit: 2048m
 
   node3:
     image: sample-network/besu:${BESU_VERSION}
     environment:
       - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
+      - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: [
       "--config-file=/config/config.toml",
       "--genesis-file=/config/genesis.json",
@@ -195,9 +212,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
-      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
-      - ./config/besu/networkFiles/node5/keys:/opt/besu/keys
       - ./logs/besu:/var/log/
+      - ./config/besu/${SAMPLE_POA_NAME-ibft2}Genesis.json:/config/genesis.json
+      - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
     depends_on:
       - bootnode
@@ -205,6 +222,7 @@ services:
     ports:
       - 20004:8545/tcp
       - 20005:8546/tcp
+    mem_limit: 2048m
 
   explorer:
     build: block-explorer-light/.
@@ -253,6 +271,7 @@ services:
         hard: 65536
     cap_add:
       - IPC_LOCK
+    mem_limit: 2048m
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.4.2
@@ -294,6 +313,7 @@ services:
       - redis
     volumes:
       - ./logs/besu/:/var/log/besu/
+      - ./logs/orion/:/var/log/orion/
 
 volumes:
   public-keys:

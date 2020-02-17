@@ -48,6 +48,8 @@ Use this scenario:
 - Run `./run-dapp.sh` and when that completes open a new tab in your browser and go to `http://localhost:3001` which opens the Truffle pet-shop box app and you can adopt a pet from there.
 NOTE: Once you have adopted a pet, you can also go to the block explorer and search for the transaction where you can see its details recorded. Metamask will also have a record of any transactions.
 
+This is a [video tutorial](https://www.youtube.com/watch?v=_3E9FRJldj8) of the DApp example
+
 Behind the scenes, this has used a smart contract that is compiled and then deployed (via a migration) to our test network. The source code for the smart contract and the DApp can be found in the folder `pet-shop`
 
 ![Image dapp](./images/sampleNetworks-dapp.png)
@@ -127,11 +129,16 @@ Use this scenario:
 
 ![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
 
+
+This is a [video tutorial](https://www.youtube.com/watch?v=MhOJKOoEZQQ) of what the permissioning example does
+
 `./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
 `./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
 Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp 
  
 There is an optional `-e` parameter which provides centralised logging functionality via ELK for *both* commands above
+
+
 
 
 ### Stop Services and Network
