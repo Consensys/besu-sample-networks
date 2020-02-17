@@ -27,6 +27,7 @@ displayUsage()
   echo "    -c <ibft2|clique|ethash> : the consensus mechanism that you want to run
                                        on your network, default is ethash"
   echo "    -e                       : setup ELK with the network."
+  echo "    -s                       : test ethsigner with the rpcnode (available when using a POA consensus algorithm. Note the -s option must be preceeded by the -c option"
   exit 0
 }
 
@@ -41,7 +42,7 @@ clique='clique' # value to use for clique option
 
 composeFile="docker-compose"
 
-while getopts "hec:" o; do
+while getopts "hesc:" o; do
   case "${o}" in
     h)
       displayUsage
@@ -64,6 +65,15 @@ while getopts "hec:" o; do
     e)
       elk_compose="${composeFile/docker-compose/docker-compose_elk}"
       composeFile="$elk_compose"
+      ;;
+    s)
+      if [[ $composeFile == *"poa"* ]]; then
+        signer_compose="${composeFile/poa/poa_signer}"
+        composeFile="$signer_compose"
+      else
+        echo "Error: Unsupported consensus value." >&2
+        displayUsage
+      fi
       ;;
     *)
       displayUsage
