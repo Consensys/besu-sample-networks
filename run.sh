@@ -94,7 +94,8 @@ echo "Start network"
 echo "--------------------"
 
 echo "Starting network..."
-docker-compose ${composeFile} up -d
+docker-compose ${composeFile} build --pull
+docker-compose ${composeFile} up --detach
 
 #list services and endpoints
 ./list.sh
