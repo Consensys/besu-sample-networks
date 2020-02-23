@@ -39,8 +39,7 @@ services:
         BESU_VERSION: ${BESU_VERSION}
     image: sample-network/besu:${BESU_VERSION}
     environment:
-      - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
-      - ./config/besu/config.toml:/config/config.toml
+      - BESU_PUBLIC_KEY_DIRECTORY=${BESU_PUBLIC_KEY_DIRECTORY}
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     entrypoint: /opt/besu/bootnode_start.sh --config-file=/config/config.toml --network=dev --min-gas-price=0
     volumes:
@@ -106,9 +105,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/orion/networkFiles/orion1/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion1
@@ -134,9 +133,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/orion/networkFiles/orion2/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion2
@@ -162,9 +161,9 @@ services:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/orion/networkFiles/orion3/nodeKey.pub:/config/orion/orion.pub
       - ./config/besu/networkFiles/node3/keys:/opt/besu/keys
-      - ./logs/besu:/var/log/
     depends_on:
       - bootnode
       - orion3

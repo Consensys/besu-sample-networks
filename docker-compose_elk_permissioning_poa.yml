@@ -27,8 +27,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/bootnode/keys:/opt/besu/keys
       - bootnode:/opt/besu/data
@@ -45,8 +45,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/validator2/keys:/opt/besu/keys
       - validator2:/opt/besu/data
@@ -65,8 +65,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/validator3/keys:/opt/besu/keys
       - validator3:/opt/besu/data
@@ -85,8 +85,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/validator4/keys:/opt/besu/keys
       - validator4:/opt/besu/data
@@ -105,8 +105,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/rpcnode/keys:/opt/besu/keys
       - rpcnode:/opt/besu/data
@@ -128,8 +128,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/node1/keys:/opt/besu/keys
       - node1:/opt/besu/data
@@ -148,8 +148,8 @@ services:
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
-      - ./logs/besu:/var/log/
       - ./config/besu/log-config.xml:/config/log-config.xml
+      - ./logs/besu:/var/log/
       - ./config/besu/ibft2GenesisPermissioning.json:/config/genesis.json
       - ./config/besu/networkFiles/node2/keys:/opt/besu/keys
       - node2:/opt/besu/data
