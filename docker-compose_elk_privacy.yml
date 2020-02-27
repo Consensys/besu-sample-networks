@@ -5,32 +5,38 @@ services:
   orion1:
     image: "pegasyseng/orion:develop"
     environment:
+      - ORION_OTHERNODES=http://orion2:8080/,http://orion3:8080/
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["/config/orion/orion.conf"]
+    command: ["/config/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
-      - ./config/orion/networkFiles/orion1:/config/orion/
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion1:/keys/
       - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
 
   orion2:
     image: "pegasyseng/orion:develop"
     environment:
+      - ORION_OTHERNODES=http://orion1:8080/,http://orion3:8080/
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["/config/orion/orion.conf"]
+    command: ["/config/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
-      - ./config/orion/networkFiles/orion2:/config/orion/
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion2:/keys/
       - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
 
   orion3:
     image: "pegasyseng/orion:develop"
     environment:
+      - ORION_OTHERNODES=http://orion2:8080/,http://orion1:8080/
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
-    command: ["/config/orion/orion.conf"]
+    command: ["/config/orion.conf"]
     volumes:
-      - ./config/orion/log-config.xml:/config/log-config.xml
-      - ./config/orion/networkFiles/orion3:/config/orion/
+      - ./config/orion/orion.conf:/config/orion.conf
+      - ./config/orion/networkFiles/orion3:/keys/
       - ./logs/orion:/var/log/
+      - ./config/orion/log-config.xml:/config/log-config.xml
 
   bootnode:
     build:
