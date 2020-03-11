@@ -6,6 +6,8 @@ services:
     image: "pegasyseng/orion:develop"
     environment:
       - ORION_OTHERNODES=http://orion2:8080/,http://orion3:8080/
+      - ORION_NODEURL=http://orion1:8080
+      - ORION_CLIENTURL=http://orion1:8888
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion.conf"]
     volumes:
@@ -18,6 +20,8 @@ services:
     image: "pegasyseng/orion:develop"
     environment:
       - ORION_OTHERNODES=http://orion1:8080/,http://orion3:8080/
+      - ORION_NODEURL=http://orion2:8080
+      - ORION_CLIENTURL=http://orion2:8888
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion.conf"]
     volumes:
@@ -30,6 +34,8 @@ services:
     image: "pegasyseng/orion:develop"
     environment:
       - ORION_OTHERNODES=http://orion2:8080/,http://orion1:8080/
+      - ORION_NODEURL=http://orion3:8080
+      - ORION_CLIENTURL=http://orion3:8888
       - LOG4J_CONFIGURATION_FILE=/config/log-config.xml
     command: ["/config/orion.conf"]
     volumes:
