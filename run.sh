@@ -51,6 +51,7 @@ while getopts "hesc:" o; do
       algo=${OPTARG}
       case "${algo}" in
         ibft2|clique)
+          export SAMPLE_POA_NAME="${algo}"
           export SAMPLE_POA_API="${!algo}"
           export SAMPLE_VERSION="${BESU_VERSION}"
           composeFile="${composeFile}_poa"
