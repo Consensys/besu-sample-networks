@@ -123,6 +123,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion1:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -150,6 +151,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion2:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -177,6 +179,7 @@ services:
       "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
       "--min-gas-price=0",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion3:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:

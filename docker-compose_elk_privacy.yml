@@ -111,6 +111,7 @@ services:
       "--min-gas-price=0",
       "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion1:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -139,6 +140,7 @@ services:
       "--min-gas-price=0",
       "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion2:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
@@ -167,6 +169,7 @@ services:
       "--min-gas-price=0",
       "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV",
       "--privacy-enabled",
+      "--privacy-onchain-groups-enabled",
       "--privacy-url=http://orion3:8888",
       "--privacy-public-key-file=/config/orion/orion.pub"]
     volumes:
