@@ -22,10 +22,12 @@ PARAMS=""
 displayUsage()
 {
   echo "This script creates and start a local private Besu network using Docker."
-  echo "You can select the consensus mechanism to use.\n"
+  echo -e "You can select the consensus mechanism and privacy group mode to use.\n"
   echo "Usage: ${me} [OPTIONS]"
   echo "    -c <ibft2|clique|ethash> : the consensus mechanism that you want to run
                                        on your network, default is ethash"
+  echo "    -p <offchain|onchain>    : the privacy group mode that you want to run
+                                       on your network, default is offchain"
   echo "    -e                       : setup ELK with the network."
   exit 0
 }
@@ -41,7 +43,7 @@ clique='clique' # value to use for clique option
 
 composeFile="docker-compose_privacy"
 
-while getopts "hec:" o; do
+while getopts "hec:p:" o; do
   case "${o}" in
     h)
       displayUsage
@@ -57,7 +59,7 @@ while getopts "hec:" o; do
         ethash)
           ;;
         *)
-          echo "Error: Unsupported consensus value." >&2
+          echo -e "Error: Unsupported consensus value.\n" >&2
           displayUsage
       esac
       ;;
@@ -65,6 +67,20 @@ while getopts "hec:" o; do
       elk_compose="${composeFile/docker-compose/docker-compose_elk}"
       composeFile="$elk_compose"
       ;;
+    p)
+      privmode=${OPTARG}
+      case "${privmode}" in
+        onchain)
+          export PRIVACY_ONCHAIN_GROUPS_ENABLED=true
+          ;;
+        offchain)
+          export PRIVACY_ONCHAIN_GROUPS_ENABLED=false
+          ;;
+        *)
+          echo -e "Error: Unsupported privacy group mode (must be offchain or onchain).\n" >&2
+          displayUsage
+        esac
+        ;;
     *)
       displayUsage
     ;;
