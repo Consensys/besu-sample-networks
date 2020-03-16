@@ -63,7 +63,8 @@ services:
       "--node-private-key-file=/opt/besu/keys/key",
       "--min-gas-price=0",
       "--rpc-http-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
-      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}" ]
+      "--rpc-ws-api=EEA,WEB3,ETH,NET,PRIV,${SAMPLE_POA_API-ibft}",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}" ]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -157,7 +158,8 @@ services:
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion1:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub"]
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -188,7 +190,8 @@ services:
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion2:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub"]
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
@@ -219,7 +222,8 @@ services:
       "--min-gas-price=0",
       "--privacy-enabled",
       "--privacy-url=http://orion3:8888",
-      "--privacy-public-key-file=/config/orion/orion.pub"]
+      "--privacy-public-key-file=/config/orion/orion.pub",
+      "--privacy-onchain-groups-enabled=${PRIVACY_ONCHAIN_GROUPS_ENABLED}"]
     volumes:
       - public-keys:${BESU_PUBLIC_KEY_DIRECTORY}
       - ./config/besu/config.toml:/config/config.toml
