@@ -29,10 +29,10 @@ echo "Stop and remove network..."
 docker-compose ${composeFile} down -v
 docker-compose ${composeFile} rm -sfv
 
-
-
 docker image rm sample-network/besu:${version}
 docker image rm sample-network/block-explorer-light:${version}
+docker image rm pegasyseng/orion:develop
+docker image rm hyperledger/besu:${BESU_VERSION}
 
 # elk
 if [[ ! -z `docker ps -a | grep besu-sample-network_filebeat` ]]; then
