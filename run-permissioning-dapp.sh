@@ -12,6 +12,14 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
+. ./.common.sh
+
+hash yarn 2>/dev/null || {
+  echo >&2 "This script requires yarn but it's not installed."
+  echo >&2 "Refer to documentation to fulfill requirements."
+  exit 1
+}
+
 composeFile="docker-compose_permissioning_poa"
 
 displayUsage()
