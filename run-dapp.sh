@@ -12,6 +12,19 @@
 # specific language governing permissions and limitations under the License.
 
 . ./.env
+. ./.common.sh
+
+hash node 2>/dev/null || {
+  echo >&2 "This script requires node but it's not installed."
+  echo >&2 "Refer to documentation to fulfill requirements."
+  exit 1
+}
+
+hash truffle 2>/dev/null || {
+  echo >&2 "This script requires truffle but it's not installed."
+  echo >&2 "Refer to documentation to fulfill requirements."
+  exit 1
+}
 
 # Import the following accounts into metamask
 # 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
