@@ -237,7 +237,7 @@ services:
       - IPC_LOCK
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.4.2
+    image: docker.elastic.co/kibana/kibana:7.6.1
     environment:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
       XPACK_MONITORING_ENABLED: "true"
@@ -277,6 +277,18 @@ services:
     volumes:
       - ./logs/besu/:/var/log/besu/
       - ./logs/orion/:/var/log/orion/
+
+  metricbeat:
+    build: ./metricbeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
 
 volumes:
   public-keys:
