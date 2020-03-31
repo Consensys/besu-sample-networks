@@ -223,7 +223,7 @@ services:
         ipv4_address: 172.24.2.19
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.4.2
+    image: docker.elastic.co/kibana/kibana:7.6.1
     environment:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
       XPACK_MONITORING_ENABLED: "true"
@@ -271,6 +271,22 @@ services:
     networks:
       sample:
         ipv4_address: 172.24.2.22
+
+  metricbeat:
+    build: ./metricbeat
+    environment:
+      - ENV_NAME=dev
+      - IP_ADDRESS=127.0.0.1
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    links:
+      - redis
+    networks:
+      sample:
+        ipv4_address: 172.24.2.23
+
 
 volumes:
   public-keys:

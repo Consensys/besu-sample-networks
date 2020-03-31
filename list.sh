@@ -45,6 +45,10 @@ if [ $elk_setup == true ]; then
       sleep 10
     done
 
+    echo "Setting up the metricbeat index pattern in kibana"
+    curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/metricbeat" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "metricbeat-*","timeFieldName": "@timestamp"}}'
+    curl -X POST "http://${HOST}:5601/api/saved_objects/_import" -H 'kbn-xsrf: true' --form file=@./monitoring/kibana/besu_overview_dashboard.ndjson
+
     echo "Setting up the besu index pattern in kibana"
     curl -X POST "http://${HOST}:5601/api/saved_objects/index-pattern/besu" -H 'kbn-xsrf: true' -H 'Content-Type: application/json' -d '{"attributes": {"title": "besu-*","timeFieldName": "@timestamp"}}'
 
@@ -74,3 +78,4 @@ else
   fi
   echo "****************************************************************"
 fi
+

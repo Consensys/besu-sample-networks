@@ -38,6 +38,9 @@ docker image rm hyperledger/besu:${BESU_VERSION}
 if [[ ! -z `docker ps -a | grep besu-sample-network_filebeat` ]]; then
   removeDockerImage besu-sample-network_filebeat
 fi
+if [[ ! -z `docker ps -a | grep besu-sample-network_metricbeat` ]]; then
+  removeDockerImage besu-sample-network_metricbeat
+fi
 if [[ ! -z `docker ps -a | grep besu-sample-network_logstash` ]]; then
   removeDockerImage besu-sample-network_logstash
 fi

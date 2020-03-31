@@ -4,7 +4,7 @@ filebeat.modules:
 # List of inputs to fetch data.
 filebeat.inputs:
   - paths:
-      - "/var/log/logstash/logstash-default-*.log"
+      - "/var/log/logstash/logstash-*.log"
     type: log
     enabled: true
     document_type: logstash

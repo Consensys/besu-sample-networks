@@ -1,4 +1,4 @@
-FROM docker.elastic.co/beats/filebeat:7.4.2
+FROM docker.elastic.co/beats/filebeat:7.6.1
 
 ENV ENV_NAME dev
 ENV IP_ADDRESS "127.0.0.1"
