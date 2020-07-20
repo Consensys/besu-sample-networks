@@ -32,15 +32,15 @@ To run these tutorials, you must have the following installed:
 ## Example Network Setups
 All our documentation can be found on the [Besu documentation site](https://besu.hyperledger.org/Tutorials/Examples/Private-Network-Example/).
 
-There are multiple examples in this repo, and each has a POW(proof of work) and POA(proof of authority) setup. Each setup 
-comprises a minimum of 4 ethereum nodes with monitoring tools like:
+There are multiple examples in this repo, and each has a Proof of Work(POW) and Proof of Authority(POA) setup. Each setup 
+comprises a minimum of 4 Ethereum nodes with monitoring tools like:
 - [Alethio Lite Explorer](https://besu.hyperledger.org/en/stable/HowTo/Deploy/Lite-Block-Explorer/) to explore blockchain data at the block, transaction, and account level
 - [Metrics monitoring](https://besu.hyperledger.org/en/stable/HowTo/Monitor/Metrics/) via prometheus and grafana to give you insights into how the chain is progressing
 - Optional [logs monitoring](https://besu.hyperledger.org/en/latest/HowTo/Monitor/Elastic-Stack/) to give you real time logs of the nodes. This feature is enabled with a `-e` flag when starting the sample network
 
 The examples also include architecture diagrams to visually show components. They generally use the POA (IBFT2 algorithm) setup, and to view the architecture diagrams for the POW (ethash) setup please see the `images` folder (where the POA variants have different suffixes). 
 
-Each section also includes a few use cases personas (intended as guidelines only).
+Each section also includes use case personas (intended as guidelines only).
  
 **To start services and the network:**
 
@@ -69,8 +69,8 @@ Start the network with:
 `./run.sh ` 
 
 Use cases: 
- - you are learning about how ethereum works 
- - you are looking to create a mainnet or ropsten node but want to see how it works on a smaller scale
+ - you are learning about how Ethereum works 
+ - you are looking to create a Mainnet or Ropsten node but want to see how it works on a smaller scale
  - you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs. 
  Generally speaking DApp developers prefer the immediate finality that a POA IBFT2 algorithm offer but POW networks work wells too
  
@@ -83,7 +83,7 @@ Start the network with:
 `./run.sh -c ibft2` 
 
 Use cases: 
- - you are learning about how ethereum works 
+ - you are learning about how Ethereum works 
  - you are looking to create a private eth network
  - you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs. With the IBFT2 protocol you get immediate finality which makes life easier
 
@@ -112,8 +112,8 @@ Start the network with:
 `./run.sh -c ibft2 -e` 
 
 Use cases: 
- - you are learning about how ethereum works 
- - you are looking to create a private eth network
+ - you are learning about how Ethereum works 
+ - you are looking to create a private Ethereum network
  - you are a DevOps engineer or administrator looking to see how the full blockchain works with logging and metrics
  - you are a DApp developer and looking to build on the previous example with the ability to see transaction logs via ELK 
 
@@ -127,9 +127,9 @@ Start the network with:
 `./run-privacy.sh` starts all the docker containers in POW mode, and also has 3 Orion nodes for privacy 
 
 Use cases: 
- - you are learning about how eth works 
+ - you are learning about how Ethereum works 
  - you are a user looking to execute private transactions at least one other party
- - you are looking to create a private eth network with private transactions between two or more parties. The logs make it easy to see whats going on betwen nodes and transactions
+ - you are looking to create a private Ethereum network with private transactions between two or more parties. The logs make it easy to see whats going on between nodes and transactions
 
 
 This is a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) of what the privacy example does
@@ -174,7 +174,7 @@ Open a new tab in your browser and go to `http://localhost:3001` to use the Perm
 
 
 Use this scenario:
- - if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
+ - if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and restrictions
  - if you are looking to start a consortium network with permissioning so you can restrict members that join the network
 
 This is a [video tutorial](https://www.youtube.com/watch?v=MhOJKOoEZQQ) of what the permissioning example does
@@ -203,7 +203,7 @@ Start the network with:
 `./run.sh -c ibft2 -s` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
 
 Use this scenario:
- - if you need to sign transactions with a private key and forward that along to the eth client ie. Besu
-
+ - if you need to sign transactions with a private key and forward that to the Ethereum client (for example Besu)
+ 
 Once it is up you can follow this [tutorial](https://docs.ethsigner.pegasys.tech/en/stable/HowTo/Transactions/Make-Transactions/) which shows you how to sign transactions that get on the chain. 
 *NOTE*: please remember to use port 18545 for any examples in this tutorial
