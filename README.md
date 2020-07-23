@@ -1,4 +1,15 @@
-# Sample Networks
+# Besu Sample Networks
+
+## Table of Contents
+1. [Prerequisites](#prerequisites)
+2. [Example Network Setups](#example-network-setups)
+    1. [POW (ethash) Network](#pow-network)
+    2. [POA (IBFT2) Network](#poa-network)
+    3. [Smart Contracts & DApp](#smart-contract-dapp)
+    4. [POA (IBFT2) Network with ELK for centralised logs](#poa-network-logs)
+    5. [POA (IBFT2) Network with Privacy via Orion](#poa-network-privacy)
+    6. [POA (IBFT2) Network with On Chain Permissioning](#poa-network-permissioning)
+    7. [POA (IBFT2) Network with Ethsigner](#poa-network-ethsigner)
 
 ## Prerequisites
 
@@ -18,31 +29,67 @@ To run these tutorials, you must have the following installed:
 - [Nodejs](https://nodejs.org/en/download/) and [Truffle](https://www.trufflesuite.com/truffle) if using the DApp
 
 
-## Description
-
-There are multiple examples in this repo, and each has a POW and POA example. You can choose the default setup which comprises a 4 node network with the Block Explorer and our Prometheus & Grafana dashboard to track the progress of the chain; or the whole setup with logging via ELK.   
-Please use the following use cases personas as guidelines only: 
-
+## Example Network Setups
 All our documentation can be found on the [Besu documentation site](https://besu.hyperledger.org/Tutorials/Examples/Private-Network-Example/).
 
-All the architecture diagrams below generally use the POA (IBFT2) setup, to view the architecture diagrams for the POW (ethash) setup please see the `images` folder, where the files share the same name but have different suffixes. 
+There are multiple examples in this repo, and each has a Proof of Work(POW) and Proof of Authority(POA) setup. Each setup 
+comprises a minimum of 4 Ethereum nodes with monitoring tools like:
+- [Alethio Lite Explorer](https://besu.hyperledger.org/en/stable/HowTo/Deploy/Lite-Block-Explorer/) to explore blockchain data at the block, transaction, and account level
+- [Metrics monitoring](https://besu.hyperledger.org/en/stable/HowTo/Monitor/Metrics/) via prometheus and grafana to give you insights into how the chain is progressing
+- Optional [logs monitoring](https://besu.hyperledger.org/en/latest/HowTo/Monitor/Elastic-Stack/) to give you real time logs of the nodes. This feature is enabled with a `-e` flag when starting the sample network
 
-### Start Services and Network
+The examples also include architecture diagrams to visually show components. They generally use the POA (IBFT2 algorithm) setup, and to view the architecture diagrams for the POW (ethash) setup please see the `images` folder (where the POA variants have different suffixes). 
+
+Each section also includes use case personas (intended as guidelines only).
+ 
+**To start services and the network:**
+
 `./run.sh` starts all the docker containers in POW mode
 
 `./run.sh -c ibft2` starts all the docker containers in POA mode using the IBFT2 Consensus algorithm
 
 There is an optional `-e` parameter which provides centralised logging functionality via ELK 
 
+**To stop services :**
 
-#### Basic 4 Node Network with Block Explorer and Prometheus & Grafana to track the progress of your chain
+`./stop.sh` stops the entire network, and you can resume where it left off with `./resume.sh` 
 
-Use this scenario:
- - if you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs 
+`./remove.sh ` will first stop and then remove all containers and images
+
+
+
+### i. POW (ethash) Network  <a name="pow-network"></a>
+
+This is the closest thing to how 'BitCoin' works, where miners create blocks. In the Ethereum space, the 'mainnet' and 'ropsten' public networks are POW based
  
-![Image basic](./images/sampleNetworks-poa.png)
+![Image basic_pow](./images/sampleNetworks-pow.png)
 
-#### Use our sample smart contract and DApp (with Metamask) with any of the examples below.
+Start the network with: 
+
+`./run.sh ` 
+
+Use cases: 
+ - you are learning about how Ethereum works 
+ - you are looking to create a Mainnet or Ropsten node but want to see how it works on a smaller scale
+ - you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs. 
+ Generally speaking DApp developers prefer the immediate finality that a POA IBFT2 algorithm offer but POW networks work wells too
+ 
+### ii. POA (ethash) Network  <a name="poa-network"></a>
+ 
+![Image basic_poa](./images/sampleNetworks-poa.png)
+
+Start the network with: 
+
+`./run.sh -c ibft2` 
+
+Use cases: 
+ - you are learning about how Ethereum works 
+ - you are looking to create a private eth network
+ - you are a DApp Developer looking for a robust, simple network to use as an experimental testing ground for POCs. With the IBFT2 protocol you get immediate finality which makes life easier
+
+
+### iii. Smart Contracts & DApp (with MetaMask) <a name="smart-contract-dapp"></a>
+
 - Install [metamask](https://metamask.io/) as an extension in your browser
 - Once you have setup your own private account, select 'My Accounts' by clicking on the avatar pic and then 'Import Account' and enter the following private_key: `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
 - Run `./run-dapp.sh` and when that completes open a new tab in your browser and go to `http://localhost:3001` which opens the Truffle pet-shop box app and you can adopt a pet from there.
@@ -54,27 +101,38 @@ Behind the scenes, this has used a smart contract that is compiled and then depl
 
 ![Image dapp](./images/sampleNetworks-dapp.png)
 
-#### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and logs via ELK
-This is the same as the previous example but also has ELK in it for the logs
-Use this scenario:
-- if you are a DevOps engineer or administrator looking to see how the full blockchain works with logging and metrics
-- if you are a DApp developer and looking to build on the previous example with the ability to see transaction logs via ELK 
+### iv. [POA (IBFT2) Network with ELK for centralised logs] <a name="poa-network-logs"></a>
+
+This is the same as example ii. [POA (IBFT2) Network](#poa-network) but adds in centralized logging via ELK 
 
 ![Image basic_elk](./images/sampleNetworks-poa-elk.png)
 
+Start the network with: 
 
-#### Basic 4 Node Network with Privacy (Orion) node sets, the Block Explorer and Prometheus & Grafana 
-Use this scenario:
-- if you are a user looking to execute private transactions at least one other party
+`./run.sh -c ibft2 -e` 
 
-![Image basic_orion](./images/sampleNetworks-poa-orion.png)
- 
+Use cases: 
+ - you are learning about how Ethereum works 
+ - you are looking to create a private Ethereum network
+ - you are a DevOps engineer or administrator looking to see how the full blockchain works with logging and metrics
+ - you are a DApp developer and looking to build on the previous example with the ability to see transaction logs via ELK 
+
+### v. POA (IBFT2) Network with Privacy via Orion <a name="poa-network-privacy"></a>
+
+![Image basic_orion_elk](./images/sampleNetworks-poa-orion-elk.png)
+
+Start the network with: 
+`./run-privacy.sh -c ibft2 -e` starts all the docker containers in POA mode using the IBFT2 Consensus algorithm, and also has 3 Orion nodes for privacy 
+
 `./run-privacy.sh` starts all the docker containers in POW mode, and also has 3 Orion nodes for privacy 
- 
-`./run-privacy.sh -c ibft2` starts all the docker containers in POA mode using the IBFT2 Consensus algorithm, and also has 3 Orion nodes for privacy 
 
-There is an optional `-e` parameter which provides centralised logging functionality via ELK 
+Use cases: 
+ - you are learning about how Ethereum works 
+ - you are a user looking to execute private transactions at least one other party
+ - you are looking to create a private Ethereum network with private transactions between two or more parties. The logs make it easy to see whats going on between nodes and transactions
 
+
+This is a [video tutorial](https://www.youtube.com/watch?v=Menekt6-TEQ) of what the privacy example does
 
 Where the node details are as follows:
 
@@ -85,12 +143,9 @@ node2 | 0xa46f0935de4176ffeccdeecaf3c6e3ca03e31b22 | qVDsbJh2UluZOePxbXAL49g0S0s
 node3 | 0x998c8bc11c28b667e4b1930c3fe3c9ab1cde3c52 | T1ItOQxwgY1pTW6YXb2EbKXYkK4saBEys3CfJ2OIKHs= | http://localhost:20004
 
 
-###### Testing Privacy between Orion nodes
+**Testing Privacy between Orion nodes**
 
-###### Prerequisites
- - [Nodejs](https://nodejs.org/en/download/)
- 
-Follow the [eeajs-multinode-example](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) which deploys 
+Install [Nodejs](https://nodejs.org/en/download/) and then follow the [eeajs-multinode-example](https://besu.hyperledger.org/en/stable/Tutorials/Privacy/eeajs-Multinode-example/) which deploys 
 an `EventEmitter` contract and then sends a couple of Private Transaction from Node1 -> Node2 (& vice versa) with an arbitrary value (1000). 
 
 At the end of both transactions, it then reads all three Orion nodes to check the value at an address, and you should observe 
@@ -101,23 +156,30 @@ There is an additional erc20 token example that you can also test with: executin
 
 This can be verified from the `data` field of the `logs` which is `1`.
 
- 
-#### Basic 4 Node Network with Privacy (Orion) node sets, the Block Explorer, Prometheus & Grafana and logs via ELK 
-This is the same as the previous example but also has ELK in it for the logs
-Use this scenario:
-- if you are a user looking to execute private transactions at least one other party
-- if you are a developer and looking to build on the previous example with the ability to see transaction logs via ELK 
-
-![Image basic_orion_elk](./images/sampleNetworks-poa-orion-elk.png)
+### vi. POA (IBFT2) Network with On Chain Permissioning <a name="poa-network-permissioning"></a>
 
 
-#### Basic 4 Node Network with Block Explorer, Prometheus & Grafana and 2 extra nodes for on chain permissioning
 This example showcases on chain permissioning by deploying come [smart contracts](https://github.com/PegaSysEng/permissioning-smart-contracts)
 
-Use this scenario:
-- if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and retrictions
+![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
 
-###### Prerequisites
+
+Start the network with: 
+
+`./run-permissioning.sh -e` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
+
+`./run-permissioning-dapp.sh -e` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
+
+Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp 
+
+
+Use this scenario:
+ - if you are a DevOps engineer or administrator looking to see how the full blockchain works with on chain permissioning and restrictions
+ - if you are looking to start a consortium network with permissioning so you can restrict members that join the network
+
+This is a [video tutorial](https://www.youtube.com/watch?v=MhOJKOoEZQQ) of what the permissioning example does
+ 
+You need to have the following tools installed
  - [Nodejs](https://nodejs.org/en/download/)
  - [Yarn](https://www.npmjs.com/package/yarn)
  - [JQ](https://stedolan.github.io/jq/)
@@ -127,22 +189,21 @@ Use this scenario:
     - `0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3`
     - `0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f`
 
-![Image basic_permissioning](./images/sampleNetworks-poa-permissioning.png)
+Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp, where you can allow/disallow nodes from the network
 
 
-This is a [video tutorial](https://www.youtube.com/watch?v=MhOJKOoEZQQ) of what the permissioning example does
 
-`./run-permissioning.sh` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
-`./run-permissioning-dapp.sh` With the network up from the previous step, it will migrate the contracts to the network. Once complete, it restarts the blockchain network with permissions enabled so the rules and permissions deployed in the previous step take effect
-Open a new tab in your browser and go to `http://localhost:3001` to use the Permissioning DApp 
+### vii. POA (IBFT2) Network with Ethsigner to sign transactions <a name="poa-network-ethsigner"></a>
+
+![Image ethsigner](./images/sampleNetworks-poa-signer.png)
+
+
+Start the network with: 
+
+`./run.sh -c ibft2 -s` gets the latest smart contract code, compiles the contracts and updates the genesis file with the contract code. Once done it spins up a full network 
+
+Use this scenario:
+ - if you need to sign transactions with a private key and forward that to the Ethereum client (for example Besu)
  
-There is an optional `-e` parameter which provides centralised logging functionality via ELK for *both* commands above
-
-
-
-
-### Stop Services and Network
-`./stop.sh` stops all the docker containers created.
-
-### Remove stopped containers and volumes
-`./remove.sh` stops and removes all the containers and volumes.
+Once it is up you can follow this [tutorial](https://docs.ethsigner.pegasys.tech/en/stable/HowTo/Transactions/Make-Transactions/) which shows you how to sign transactions that get on the chain. 
+*NOTE*: please remember to use port 18545 for any examples in this tutorial
