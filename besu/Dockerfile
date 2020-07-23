@@ -7,7 +7,7 @@ COPY --chown=besu:besu *_start.sh /opt/besu/
 
 # Install a dos 2 unix EOL converter (supporting either alpine or ubuntu images)
 USER root
-RUN mkdir -p /opt/besu/public-keys && chown -R besu:besu /opt/besu/public-keys
+RUN mkdir -p /opt/besu/public-keys /opt/besu/data && chown -R besu:besu /opt/besu/
 RUN apt-get update && apt-get install dos2unix && \
     rm -rf /var/cache/apt/* && rm -rf /var/cache/apk/*
 
