@@ -34,7 +34,6 @@ PARAMS=""
 displayUsage()
 {
   echo "This script creates and start a local private Besu network using Docker."
-  echo "You can select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
   echo "    -e                       : setup ELK with the network."
   exit 0
