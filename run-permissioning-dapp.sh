@@ -11,6 +11,8 @@
 # an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 # specific language governing permissions and limitations under the License.
 
+NO_LOCK_REQUIRED=false
+
 . ./.env
 . ./.common.sh
 
@@ -25,7 +27,6 @@ composeFile="docker-compose_permissioning_poa"
 displayUsage()
 {
   echo "This script creates and start a local private Besu network using Docker."
-  echo "You can select the consensus mechanism to use.\n"
   echo "Usage: ${me} [OPTIONS]"
   echo "    -e                       : setup ELK with the network."
   exit 0
