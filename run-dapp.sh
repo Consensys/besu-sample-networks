@@ -34,6 +34,7 @@ hash truffle 2>/dev/null || {
 # build the dapp
 cd pet-shop
 npm install
+npm install #fix package dependencies error
 
 # compile the contracts
 truffle compile
